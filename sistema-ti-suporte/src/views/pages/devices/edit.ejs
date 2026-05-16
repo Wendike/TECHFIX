@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Editar Dispositivo</h2>
+            <p>Atualize dados do aparelho, defeito, acessórios e status.</p>
+          </div>
+
+          <a href="/devices" class="btn">Voltar</a>
+        </div>
+
+        <form method="POST" action="/devices/<%= device.id %>/update" class="form-grid">
+          <div class="form-group">
+            <label>Cliente *</label>
+            <select name="client_id" required>
+              <% clients.forEach(function(client) { %>
+                <option value="<%= client.id %>" <%= Number(device.client_id) === Number(client.id) ? 'selected' : '' %>>
+                  <%= client.name %> - <%= client.phone || client.email || 'sem contato' %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= device.status === option.value ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Tipo do dispositivo *</label>
+            <input type="text" name="device_type" value="<%= device.device_type %>" required>
+          </div>
+
+          <div class="form-group">
+            <label>Marca</label>
+            <input type="text" name="brand" value="<%= device.brand || '' %>">
+          </div>
+
+          <div class="form-group">
+            <label>Modelo</label>
+            <input type="text" name="model" value="<%= device.model || '' %>">
+          </div>
+
+          <div class="form-group">
+            <label>Número de série / IMEI</label>
+            <input type="text" name="serial_number" value="<%= device.serial_number || '' %>">
+          </div>
+
+          <div class="form-group form-full">
+            <label>Defeito relatado pelo cliente *</label>
+            <textarea name="problem_description" rows="4" required><%= device.problem_description || '' %></textarea>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Acessórios entregues</label>
+            <textarea name="accessories" rows="3"><%= device.accessories || '' %></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Senha / PIN informado</label>
+            <input type="text" name="password_or_pin" value="<%= device.password_or_pin || '' %>">
+          </div>
+
+          <div class="form-group">
+            <label>Estado físico</label>
+            <input type="text" name="physical_condition" value="<%= device.physical_condition || '' %>">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Atualizar Dispositivo</button>
+            <a href="/devices" class="btn">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

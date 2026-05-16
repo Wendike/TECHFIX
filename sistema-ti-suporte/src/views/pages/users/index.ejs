@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Cadastro de Usuários</h2>
+            <p>Gerencie administradores, usuários padrão, clientes e fornecedores.</p>
+          </div>
+
+          <a href="/users/create" class="btn btn-primary">Novo Usuário</a>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Perfil</th>
+                <th>Status</th>
+                <th>Criado em</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (users.length === 0) { %>
+                <tr>
+                  <td colspan="6" class="empty-table">Nenhum usuário cadastrado.</td>
+                </tr>
+              <% } %>
+
+              <% users.forEach(function(item) { %>
+                <tr>
+                  <td><strong><%= item.name %></strong></td>
+                  <td><%= item.email %></td>
+                  <td>
+                    <span class="badge badge-role"><%= item.role %></span>
+                  </td>
+                  <td>
+                    <span class="badge <%= item.status === 'active' ? 'badge-success' : 'badge-danger' %>">
+                      <%= item.status === 'active' ? 'Ativo' : 'Inativo' %>
+                    </span>
+                  </td>
+                  <td><%= item.created_at %></td>
+                  <td>
+                    <div class="actions">
+                      <a href="/users/<%= item.id %>" class="btn btn-small">Ver</a>
+                      <a href="/users/<%= item.id %>/edit" class="btn btn-small btn-warning">Editar</a>
+
+                      <form method="POST" action="/users/<%= item.id %>/status">
+                        <button type="submit" class="btn btn-small <%= item.status === 'active' ? 'btn-danger' : 'btn-success' %>">
+                          <%= item.status === 'active' ? 'Inativar' : 'Ativar' %>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

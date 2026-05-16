@@ -1,0 +1,11 @@
+node_modules/
+.env
+logs/*
+backups/*
+storage/sessions/*.sqlite
+storage/sessions/*.sqlite-journal
+src/database/*.sqlite
+src/database/*.sqlite-journal
+npm-debug.log*
+.DS_Store
+.vscode/

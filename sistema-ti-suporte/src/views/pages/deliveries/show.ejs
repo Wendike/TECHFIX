@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Comprovante de Entrega</h2>
+            <p>Registro completo da retirada do dispositivo.</p>
+          </div>
+
+          <div class="actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir</button>
+            <a href="/deliveries/<%= delivery.id %>/edit" class="btn btn-warning">Editar</a>
+            <a href="/deliveries" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="status-box">
+          <div>
+            <span>Status da entrega</span>
+            <strong class="badge <%= statusClasses[delivery.status] || 'badge-role' %>">
+              <%= statusLabels[delivery.status] || delivery.status %>
+            </strong>
+          </div>
+
+          <form method="POST" action="/deliveries/<%= delivery.id %>/status" class="status-change-form">
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= delivery.status === option.value ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Alterar Status</button>
+          </form>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Cliente</span>
+            <strong><%= delivery.client_name %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Contato</span>
+            <strong><%= delivery.client_phone || delivery.client_email || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Documento</span>
+            <strong><%= delivery.client_document || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Quem retirou</span>
+            <strong><%= delivery.received_by_name || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Entregue por</span>
+            <strong><%= delivery.delivered_by_name || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Data da entrega</span>
+            <strong><%= delivery.delivery_date || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Dispositivo</span>
+            <strong><%= delivery.device_type %> - <%= delivery.brand || '-' %> <%= delivery.model || '' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Série / IMEI</span>
+            <strong><%= delivery.serial_number || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Defeito relatado</span>
+            <strong><%= delivery.problem_description || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Acessórios entregues</span>
+            <strong><%= delivery.accessories || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Estado físico registrado</span>
+            <strong><%= delivery.physical_condition || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Endereço do cliente</span>
+            <strong>
+              <%= delivery.client_address || '-' %>
+              <% if (delivery.client_city || delivery.client_state) { %>
+                - <%= delivery.client_city || '' %><%= delivery.client_state ? ' / ' + delivery.client_state : '' %>
+              <% } %>
+            </strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Observações da entrega</span>
+            <strong><%= delivery.notes || '-' %></strong>
+          </div>
+        </div>
+
+        <div class="signature-area">
+          <div>
+            <span>Assinatura de quem retirou</span>
+          </div>
+
+          <div>
+            <span>Assinatura do responsável pela entrega</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

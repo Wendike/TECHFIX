@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Relatório de Entregas</h2>
+            <p>Total de entregas: <strong><%= deliveries.length %></strong></p>
+          </div>
+
+          <div class="actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir</button>
+            <a href="/reports" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Cliente</th>
+                <th>Quem retirou</th>
+                <th>Entregue por</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Observações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (deliveries.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma entrega encontrada.</td>
+                </tr>
+              <% } %>
+
+              <% deliveries.forEach(function(delivery) { %>
+                <tr>
+                  <td>
+                    <strong><%= delivery.device_type %></strong><br>
+                    <span class="text-muted"><%= delivery.brand || '-' %> <%= delivery.model || '' %></span><br>
+                    <span class="text-muted">Série: <%= delivery.serial_number || '-' %></span>
+                  </td>
+
+                  <td>
+                    <strong><%= delivery.client_name %></strong><br>
+                    <span class="text-muted"><%= delivery.client_phone || '-' %></span>
+                  </td>
+
+                  <td><%= delivery.received_by_name || '-' %></td>
+                  <td><%= delivery.delivered_by_name || '-' %></td>
+                  <td><%= delivery.delivery_date || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[delivery.status] || 'badge-role' %>">
+                      <%= delivery.status === 'delivered' ? 'Entregue' : 'Cancelada' %>
+                    </span>
+                  </td>
+
+                  <td><%= delivery.notes || '-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

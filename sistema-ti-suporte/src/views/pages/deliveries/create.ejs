@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Nova Entrega</h2>
+            <p>Finalize o atendimento registrando a retirada do dispositivo pelo cliente.</p>
+          </div>
+
+          <a href="/deliveries" class="btn">Voltar</a>
+        </div>
+
+        <% if (devices.length === 0) { %>
+          <div class="alert alert-error">
+            <p>Nenhum dispositivo reparado disponível para entrega. Finalize um reparo primeiro.</p>
+          </div>
+        <% } %>
+
+        <form method="POST" action="/deliveries" class="form-grid">
+          <div class="form-group form-full">
+            <label>Dispositivo reparado *</label>
+            <select name="device_id" required>
+              <option value="">Selecione um dispositivo</option>
+              <% devices.forEach(function(device) { %>
+                <option value="<%= device.id %>" <%= Number(selectedDeviceId) === Number(device.id) ? 'selected' : '' %>>
+                  #<%= device.id %> - <%= device.client_name %> | <%= device.device_type %> <%= device.brand || '' %> <%= device.model || '' %> | Série: <%= device.serial_number || '-' %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Nome de quem retirou *</label>
+            <input type="text" name="received_by_name" required placeholder="Ex: Cliente, familiar ou responsável">
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= option.value === 'delivered' ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Data da entrega</label>
+            <input type="datetime-local" name="delivery_date">
+          </div>
+
+          <div class="form-group form-full">
+            <label>Observações</label>
+            <textarea name="notes" rows="4" placeholder="Ex: Cliente testou o aparelho no balcão, retirou com carregador, autorizou entrega para terceiro..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success">Registrar Entrega</button>
+            <a href="/deliveries" class="btn">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

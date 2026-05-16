@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="cards inventory-cards">
+        <div class="card">
+          <span class="card-label">Receitas pagas</span>
+          <h2>R$ <%= Number(stats.paidIncome || 0).toFixed(2) %></h2>
+          <p>Entradas já recebidas.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Despesas pagas</span>
+          <h2>R$ <%= Number(stats.paidExpense || 0).toFixed(2) %></h2>
+          <p>Saídas já pagas.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Saldo atual</span>
+          <h2>R$ <%= Number(stats.balance || 0).toFixed(2) %></h2>
+          <p>Receitas pagas menos despesas pagas.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">A receber</span>
+          <h2>R$ <%= Number(stats.pendingIncome || 0).toFixed(2) %></h2>
+          <p>Receitas pendentes.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">A pagar</span>
+          <h2>R$ <%= Number(stats.pendingExpense || 0).toFixed(2) %></h2>
+          <p>Despesas pendentes.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Transações</span>
+          <h2><%= stats.totalTransactions %></h2>
+          <p>Total de registros financeiros.</p>
+        </div>
+      </section>
+
+      <section class="panel panel-spaced">
+        <div class="panel-header">
+          <div>
+            <h2>Resumo Financeiro</h2>
+            <p>Acompanhe entradas, saídas, contas pendentes, pagamentos e recebimentos.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/finance/create" class="btn btn-primary">Nova Transação</a>
+            <a href="/finance/transactions" class="btn">Ver Transações</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Categoria</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Origem</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (transactions.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma transação financeira cadastrada.</td>
+                </tr>
+              <% } %>
+
+              <% transactions.forEach(function(item) { %>
+                <tr>
+                  <td>
+                    <%= item.created_at %><br>
+                    <span class="text-muted">Venc: <%= item.due_date || '-' %></span>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= typeClasses[item.type] || 'badge-role' %>">
+                      <%= typeLabels[item.type] || item.type %>
+                    </span>
+                  </td>
+
+                  <td><%= item.category %></td>
+                  <td><%= item.description %></td>
+
+                  <td>
+                    <strong>R$ <%= Number(item.amount || 0).toFixed(2) %></strong>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[item.status] || 'badge-role' %>">
+                      <%= statusLabels[item.status] || item.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <% if (item.reference_type) { %>
+                      <%= item.reference_type %> #<%= item.reference_id %>
+                    <% } else { %>
+                      Manual
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

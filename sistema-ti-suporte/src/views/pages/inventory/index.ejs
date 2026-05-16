@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="cards inventory-cards">
+        <div class="card">
+          <span class="card-label">Peças ativas</span>
+          <h2><%= stats.totalParts %></h2>
+          <p>Total de peças cadastradas e ativas.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Unidades em estoque</span>
+          <h2><%= stats.totalUnits %></h2>
+          <p>Soma de todas as unidades disponíveis.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Estoque baixo</span>
+          <h2><%= stats.lowStock %></h2>
+          <p>Peças abaixo ou no estoque mínimo.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Valor de venda</span>
+          <h2>R$ <%= Number(stats.inventorySale || 0).toFixed(2) %></h2>
+          <p>Valor estimado do estoque para venda.</p>
+        </div>
+      </section>
+
+      <section class="panel panel-spaced">
+        <div class="panel-header">
+          <div>
+            <h2>Controle de Estoque</h2>
+            <p>Registre entradas, saídas, ajustes e acompanhe o saldo atual das peças.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/inventory/entry" class="btn btn-success">Entrada</a>
+            <a href="/inventory/exit" class="btn btn-danger">Saída</a>
+            <a href="/inventory/adjustment" class="btn btn-warning">Ajuste</a>
+            <a href="/inventory/movements" class="btn">Histórico</a>
+            <a href="/inventory/low-stock" class="btn">Estoque Baixo</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Peça</th>
+                <th>Fornecedor</th>
+                <th>Estoque</th>
+                <th>Valores</th>
+                <th>Localização</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (parts.length === 0) { %>
+                <tr>
+                  <td colspan="6" class="empty-table">Nenhuma peça ativa cadastrada.</td>
+                </tr>
+              <% } %>
+
+              <% parts.forEach(function(part) { %>
+                <% const lowStock = Number(part.min_stock) > 0 && Number(part.current_stock) <= Number(part.min_stock); %>
+
+                <tr>
+                  <td>
+                    <strong><%= part.name %></strong><br>
+                    <span class="text-muted">SKU: <%= part.sku || '-' %></span><br>
+                    <span class="text-muted">Categoria: <%= part.category || '-' %></span>
+                  </td>
+
+                  <td><%= part.supplier_name || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= lowStock ? 'badge-warning' : 'badge-success' %>">
+                      Atual: <%= part.current_stock %>
+                    </span>
+                    <br>
+                    <span class="text-muted">Mínimo: <%= part.min_stock %></span>
+                  </td>
+
+                  <td>
+                    <span class="text-muted">Custo: R$ <%= Number(part.cost_price || 0).toFixed(2) %></span><br>
+                    <strong>Venda: R$ <%= Number(part.sale_price || 0).toFixed(2) %></strong>
+                  </td>
+
+                  <td><%= part.location || '-' %></td>
+
+                  <td>
+                    <div class="actions">
+                      <a href="/inventory/entry?part_id=<%= part.id %>" class="btn btn-small btn-success">Entrada</a>
+                      <a href="/inventory/exit?part_id=<%= part.id %>" class="btn btn-small btn-danger">Saída</a>
+                      <a href="/inventory/adjustment?part_id=<%= part.id %>" class="btn btn-small btn-warning">Ajustar</a>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

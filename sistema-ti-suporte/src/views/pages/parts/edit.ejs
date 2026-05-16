@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Editar Peça</h2>
+            <p>Atualize dados, fornecedor, preços, estoque e localização.</p>
+          </div>
+
+          <a href="/parts" class="btn">Voltar</a>
+        </div>
+
+        <form method="POST" action="/parts/<%= part.id %>/update" class="form-grid">
+          <div class="form-group">
+            <label>Nome da peça *</label>
+            <input type="text" name="name" value="<%= part.name %>" required>
+          </div>
+
+          <div class="form-group">
+            <label>SKU / Código</label>
+            <input type="text" name="sku" value="<%= part.sku || '' %>">
+          </div>
+
+          <div class="form-group">
+            <label>Fornecedor</label>
+            <select name="supplier_id">
+              <option value="">Nenhum fornecedor</option>
+              <% suppliers.forEach(function(supplier) { %>
+                <option value="<%= supplier.id %>" <%= Number(part.supplier_id) === Number(supplier.id) ? 'selected' : '' %>>
+                  <%= supplier.company_name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Categoria</label>
+            <input type="text" name="category" value="<%= part.category || '' %>">
+          </div>
+
+          <div class="form-group">
+            <label>Preço de custo</label>
+            <input type="number" name="cost_price" step="0.01" min="0" value="<%= part.cost_price || 0 %>">
+          </div>
+
+          <div class="form-group">
+            <label>Preço de venda</label>
+            <input type="number" name="sale_price" step="0.01" min="0" value="<%= part.sale_price || 0 %>">
+          </div>
+
+          <div class="form-group">
+            <label>Estoque atual</label>
+            <input type="number" name="current_stock" min="0" value="<%= part.current_stock || 0 %>">
+          </div>
+
+          <div class="form-group">
+            <label>Estoque mínimo</label>
+            <input type="number" name="min_stock" min="0" value="<%= part.min_stock || 0 %>">
+          </div>
+
+          <div class="form-group">
+            <label>Localização no estoque</label>
+            <input type="text" name="location" value="<%= part.location || '' %>">
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status">
+              <% statuses.forEach(function(status) { %>
+                <option value="<%= status.value %>" <%= part.status === status.value ? 'selected' : '' %>>
+                  <%= status.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Descrição</label>
+            <textarea name="description" rows="4"><%= part.description || '' %></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Atualizar Peça</button>
+            <a href="/parts" class="btn">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

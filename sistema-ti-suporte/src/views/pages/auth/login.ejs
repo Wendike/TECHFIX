@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body class="auth-page">
+  <div class="auth-card">
+    <h1>TECHFIX</h1>
+    <p>Entre para acessar o sistema</p>
+
+    <% if (error && error.length) { %>
+      <div class="alert alert-error">
+        <% error.forEach(function(message) { %>
+          <p><%= message %></p>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <% if (success && success.length) { %>
+      <div class="alert alert-success">
+        <% success.forEach(function(message) { %>
+          <p><%= message %></p>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/login">
+      <label>E-mail</label>
+      <input type="email" name="email" placeholder="admin@techfix.com" required>
+
+      <label>Senha</label>
+      <input type="password" name="password" placeholder="Admin@123" required>
+
+      <button type="submit">Entrar</button>
+    </form>
+
+    <div class="login-help">
+      <strong>Acesso inicial:</strong>
+      <span>E-mail: admin@techfix.com</span>
+      <span>Senha: Admin@123</span>
+    </div>
+  </div>
+</body>
+</html>

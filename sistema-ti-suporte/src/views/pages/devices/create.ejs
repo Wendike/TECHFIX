@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Nova Entrada de Dispositivo</h2>
+            <p>Registre o aparelho recebido para diagnóstico, reparo e entrega.</p>
+          </div>
+
+          <a href="/devices" class="btn">Voltar</a>
+        </div>
+
+        <% if (clients.length === 0) { %>
+          <div class="alert alert-error">
+            <p>Cadastre pelo menos um cliente ativo antes de registrar um dispositivo.</p>
+          </div>
+        <% } %>
+
+        <form method="POST" action="/devices" class="form-grid">
+          <div class="form-group">
+            <label>Cliente *</label>
+            <select name="client_id" required>
+              <option value="">Selecione um cliente</option>
+              <% clients.forEach(function(client) { %>
+                <option value="<%= client.id %>">
+                  <%= client.name %> - <%= client.phone || client.email || 'sem contato' %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Status inicial</label>
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= option.value === 'received' ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Tipo do dispositivo *</label>
+            <input type="text" name="device_type" required placeholder="Ex: Smartphone, Notebook, Tablet, Impressora">
+          </div>
+
+          <div class="form-group">
+            <label>Marca</label>
+            <input type="text" name="brand" placeholder="Ex: Samsung, Apple, Dell, Lenovo">
+          </div>
+
+          <div class="form-group">
+            <label>Modelo</label>
+            <input type="text" name="model" placeholder="Ex: iPhone 11, Galaxy A32, Inspiron 15">
+          </div>
+
+          <div class="form-group">
+            <label>Número de série / IMEI</label>
+            <input type="text" name="serial_number" placeholder="Serial, IMEI ou patrimônio">
+          </div>
+
+          <div class="form-group form-full">
+            <label>Defeito relatado pelo cliente *</label>
+            <textarea name="problem_description" rows="4" required placeholder="Descreva o problema informado pelo cliente..."></textarea>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Acessórios entregues</label>
+            <textarea name="accessories" rows="3" placeholder="Ex: carregador, cabo, capa, fonte, mouse, bolsa..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Senha / PIN informado</label>
+            <input type="text" name="password_or_pin" placeholder="Opcional">
+          </div>
+
+          <div class="form-group">
+            <label>Estado físico</label>
+            <input type="text" name="physical_condition" placeholder="Ex: tela trincada, riscos, sem tampa, oxidado">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Registrar Entrada</button>
+            <a href="/devices" class="btn">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

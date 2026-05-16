@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Entrada e Controle de Dispositivos</h2>
+            <p>Gerencie aparelhos recebidos, defeitos, diagnóstico, reparo, entrega e cancelamento.</p>
+          </div>
+
+          <a href="/devices/create" class="btn btn-primary">Nova Entrada</a>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Cliente</th>
+                <th>Defeito relatado</th>
+                <th>Status</th>
+                <th>Entrada</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (devices.length === 0) { %>
+                <tr>
+                  <td colspan="6" class="empty-table">Nenhum dispositivo registrado.</td>
+                </tr>
+              <% } %>
+
+              <% devices.forEach(function(device) { %>
+                <tr>
+                  <td>
+                    <strong><%= device.device_type %></strong><br>
+                    <span class="text-muted">
+                      <%= device.brand || '-' %> <%= device.model || '' %>
+                    </span><br>
+                    <span class="text-muted">Série: <%= device.serial_number || '-' %></span>
+                  </td>
+
+                  <td>
+                    <strong><%= device.client_name %></strong><br>
+                    <span class="text-muted"><%= device.client_phone || '-' %></span>
+                  </td>
+
+                  <td>
+                    <%= device.problem_description.length > 80 ? device.problem_description.substring(0, 80) + '...' : device.problem_description %>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[device.status] || 'badge-role' %>">
+                      <%= statusLabels[device.status] || device.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <%= device.received_at %><br>
+                    <span class="text-muted">Por: <%= device.created_by_name || '-' %></span>
+                  </td>
+
+                  <td>
+                    <div class="actions">
+                      <a href="/devices/<%= device.id %>" class="btn btn-small">Ver</a>
+                      <a href="/devices/<%= device.id %>/edit" class="btn btn-small btn-warning">Editar</a>
+                    </div>
+
+                    <form method="POST" action="/devices/<%= device.id %>/status" class="inline-status-form">
+                      <select name="status" class="small-select">
+                        <% statusOptions.forEach(function(option) { %>
+                          <option value="<%= option.value %>" <%= device.status === option.value ? 'selected' : '' %>>
+                            <%= option.label %>
+                          </option>
+                        <% }) %>
+                      </select>
+
+                      <button type="submit" class="btn btn-small btn-primary">Atualizar</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

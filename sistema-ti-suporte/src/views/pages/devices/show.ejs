@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Detalhes do Dispositivo</h2>
+            <p>Dados completos da entrada, cliente, defeito e status atual.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/devices/<%= device.id %>/edit" class="btn btn-warning">Editar</a>
+            <a href="/devices" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="status-box">
+          <div>
+            <span>Status atual</span>
+            <strong class="badge <%= statusClasses[device.status] || 'badge-role' %>">
+              <%= statusLabels[device.status] || device.status %>
+            </strong>
+          </div>
+
+          <form method="POST" action="/devices/<%= device.id %>/status" class="status-change-form">
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= device.status === option.value ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Alterar Status</button>
+          </form>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Cliente</span>
+            <strong><%= device.client_name %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Contato do cliente</span>
+            <strong><%= device.client_phone || device.client_email || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Tipo do dispositivo</span>
+            <strong><%= device.device_type %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Marca / Modelo</span>
+            <strong><%= device.brand || '-' %> <%= device.model || '' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Número de série / IMEI</span>
+            <strong><%= device.serial_number || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Registrado por</span>
+            <strong><%= device.created_by_name || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Recebido em</span>
+            <strong><%= device.received_at || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Entregue em</span>
+            <strong><%= device.delivered_at || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Defeito relatado pelo cliente</span>
+            <strong><%= device.problem_description || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Acessórios entregues</span>
+            <strong><%= device.accessories || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Senha / PIN informado</span>
+            <strong><%= device.password_or_pin || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Estado físico</span>
+            <strong><%= device.physical_condition || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Endereço do cliente</span>
+            <strong>
+              <%= device.client_address || '-' %>
+              <% if (device.client_city || device.client_state) { %>
+                - <%= device.client_city || '' %><%= device.client_state ? ' / ' + device.client_state : '' %>
+              <% } %>
+            </strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Detalhes do Cliente</h2>
+            <p>Informações completas do cliente.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/clients/<%= client.id %>/edit" class="btn btn-warning">Editar</a>
+            <a href="/clients" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Nome</span>
+            <strong><%= client.name %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Status</span>
+            <strong><%= client.status === 'active' ? 'Ativo' : 'Inativo' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>E-mail</span>
+            <strong><%= client.email || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Telefone</span>
+            <strong><%= client.phone || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>CPF/CNPJ</span>
+            <strong><%= client.document || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Usuário vinculado</span>
+            <strong>
+              <% if (client.user_name) { %>
+                <%= client.user_name %> - <%= client.user_email %>
+              <% } else { %>
+                Sem vínculo
+              <% } %>
+            </strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Endereço</span>
+            <strong><%= client.address || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Cidade/Estado</span>
+            <strong><%= client.city || '-' %><%= client.state ? ' - ' + client.state : '' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>CEP</span>
+            <strong><%= client.zip_code || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Criado em</span>
+            <strong><%= client.created_at %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Observações</span>
+            <strong><%= client.notes || '-' %></strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

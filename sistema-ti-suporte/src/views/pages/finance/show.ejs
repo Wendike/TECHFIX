@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Detalhes da Transação</h2>
+            <p>Informações completas do lançamento financeiro.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/finance/<%= transaction.id %>/edit" class="btn btn-warning">Editar</a>
+            <a href="/finance/transactions" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Tipo</span>
+            <strong class="badge <%= typeClasses[transaction.type] || 'badge-role' %>">
+              <%= typeLabels[transaction.type] || transaction.type %>
+            </strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Status</span>
+            <strong class="badge <%= statusClasses[transaction.status] || 'badge-role' %>">
+              <%= statusLabels[transaction.status] || transaction.status %>
+            </strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Categoria</span>
+            <strong><%= transaction.category %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Valor</span>
+            <strong>R$ <%= Number(transaction.amount || 0).toFixed(2) %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Vencimento</span>
+            <strong><%= transaction.due_date || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Pago em</span>
+            <strong><%= transaction.paid_at || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Forma de pagamento</span>
+            <strong><%= transaction.payment_method || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Responsável</span>
+            <strong><%= transaction.user_name || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Origem</span>
+            <strong>
+              <% if (transaction.reference_type) { %>
+                <%= transaction.reference_type %> #<%= transaction.reference_id %>
+              <% } else { %>
+                Manual
+              <% } %>
+            </strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Criado em</span>
+            <strong><%= transaction.created_at %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Descrição</span>
+            <strong><%= transaction.description %></strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

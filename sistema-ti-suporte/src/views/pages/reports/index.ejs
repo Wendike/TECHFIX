@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="cards inventory-cards">
+        <div class="card">
+          <span class="card-label">Clientes</span>
+          <h2><%= overview.clients %></h2>
+          <p>Total de clientes cadastrados.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Dispositivos</span>
+          <h2><%= overview.devices %></h2>
+          <p>Aparelhos recebidos no sistema.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Reparos abertos</span>
+          <h2><%= overview.openRepairs %></h2>
+          <p>Serviços em andamento ou aguardando.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Entregas</span>
+          <h2><%= overview.deliveries %></h2>
+          <p>Dispositivos entregues ou registrados.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Peças</span>
+          <h2><%= overview.parts %></h2>
+          <p>Peças cadastradas.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Unidades em estoque</span>
+          <h2><%= overview.stockUnits %></h2>
+          <p>Soma do estoque atual.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Estoque baixo</span>
+          <h2><%= overview.lowStock %></h2>
+          <p>Peças abaixo ou no mínimo.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Saldo financeiro</span>
+          <h2>R$ <%= Number(overview.balance || 0).toFixed(2) %></h2>
+          <p>Receitas pagas menos despesas pagas.</p>
+        </div>
+      </section>
+
+      <section class="panel panel-spaced">
+        <div class="panel-header">
+          <div>
+            <h2>Central de Relatórios</h2>
+            <p>Consulte dados completos de clientes, dispositivos, reparos, estoque, vendas, financeiro e entregas.</p>
+          </div>
+
+          <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir Resumo</button>
+        </div>
+
+        <div class="report-grid">
+          <a href="/reports/clients" class="report-card">
+            <strong>Clientes</strong>
+            <span>Cadastro, contato, cidade, status e usuário vinculado.</span>
+          </a>
+
+          <a href="/reports/devices" class="report-card">
+            <strong>Dispositivos</strong>
+            <span>Entradas, clientes, problemas, status e datas.</span>
+          </a>
+
+          <a href="/reports/repairs" class="report-card">
+            <strong>Reparos</strong>
+            <span>Diagnóstico, técnico, valores, status e finalizações.</span>
+          </a>
+
+          <a href="/reports/inventory" class="report-card">
+            <strong>Estoque</strong>
+            <span>Peças, fornecedores, saldos, mínimos e valores.</span>
+          </a>
+
+          <a href="/reports/sales" class="report-card">
+            <strong>Vendas</strong>
+            <span>Clientes, reparos vinculados, totais, descontos e status.</span>
+          </a>
+
+          <a href="/reports/finance" class="report-card">
+            <strong>Financeiro</strong>
+            <span>Receitas, despesas, pagamentos e origem dos lançamentos.</span>
+          </a>
+
+          <a href="/reports/deliveries" class="report-card">
+            <strong>Entregas</strong>
+            <span>Dispositivos entregues, responsáveis e comprovantes.</span>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

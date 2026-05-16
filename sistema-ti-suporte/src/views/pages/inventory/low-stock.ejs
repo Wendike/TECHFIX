@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Peças com Estoque Baixo</h2>
+            <p>Lista de peças que estão abaixo ou exatamente no estoque mínimo.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/inventory/entry" class="btn btn-success">Dar Entrada</a>
+            <a href="/inventory" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Peça</th>
+                <th>Fornecedor</th>
+                <th>Estoque Atual</th>
+                <th>Estoque Mínimo</th>
+                <th>Localização</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (parts.length === 0) { %>
+                <tr>
+                  <td colspan="6" class="empty-table">Nenhuma peça com estoque baixo.</td>
+                </tr>
+              <% } %>
+
+              <% parts.forEach(function(part) { %>
+                <tr>
+                  <td>
+                    <strong><%= part.name %></strong><br>
+                    <span class="text-muted">SKU: <%= part.sku || '-' %></span>
+                  </td>
+
+                  <td><%= part.supplier_name || '-' %></td>
+
+                  <td>
+                    <span class="badge badge-warning"><%= part.current_stock %></span>
+                  </td>
+
+                  <td><%= part.min_stock %></td>
+
+                  <td><%= part.location || '-' %></td>
+
+                  <td>
+                    <a href="/inventory/entry?part_id=<%= part.id %>" class="btn btn-small btn-success">Dar Entrada</a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

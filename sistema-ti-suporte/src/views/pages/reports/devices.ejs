@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Relatório de Dispositivos</h2>
+            <p>Total de dispositivos: <strong><%= devices.length %></strong></p>
+          </div>
+
+          <div class="actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir</button>
+            <a href="/reports" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Cliente</th>
+                <th>Problema</th>
+                <th>Status</th>
+                <th>Recebido</th>
+                <th>Entregue</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (devices.length === 0) { %>
+                <tr>
+                  <td colspan="6" class="empty-table">Nenhum dispositivo encontrado.</td>
+                </tr>
+              <% } %>
+
+              <% devices.forEach(function(device) { %>
+                <tr>
+                  <td>
+                    <strong><%= device.device_type %></strong><br>
+                    <span class="text-muted"><%= device.brand || '-' %> <%= device.model || '' %></span><br>
+                    <span class="text-muted">Série: <%= device.serial_number || '-' %></span>
+                  </td>
+
+                  <td>
+                    <strong><%= device.client_name %></strong><br>
+                    <span class="text-muted"><%= device.client_phone || '-' %></span>
+                  </td>
+
+                  <td><%= device.problem_description || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[device.status] || 'badge-role' %>">
+                      <%= deviceStatusLabels[device.status] || device.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <%= device.received_at || '-' %><br>
+                    <span class="text-muted">Por: <%= device.created_by_name || '-' %></span>
+                  </td>
+
+                  <td><%= device.delivered_at || '-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

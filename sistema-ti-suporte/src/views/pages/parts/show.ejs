@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Detalhes da Peça</h2>
+            <p>Informações completas da peça, fornecedor, valores e estoque.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/parts/<%= part.id %>/edit" class="btn btn-warning">Editar</a>
+            <a href="/parts" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <% const lowStock = Number(part.min_stock) > 0 && Number(part.current_stock) <= Number(part.min_stock); %>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Nome da peça</span>
+            <strong><%= part.name %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Status</span>
+            <strong><%= part.status === 'active' ? 'Ativo' : 'Inativo' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>SKU / Código</span>
+            <strong><%= part.sku || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Categoria</span>
+            <strong><%= part.category || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Fornecedor</span>
+            <strong><%= part.supplier_name || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Contato do fornecedor</span>
+            <strong>
+              <%= part.supplier_contact || '-' %>
+              <% if (part.supplier_phone) { %>
+                - <%= part.supplier_phone %>
+              <% } %>
+            </strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Preço de custo</span>
+            <strong>R$ <%= Number(part.cost_price || 0).toFixed(2) %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Preço de venda</span>
+            <strong>R$ <%= Number(part.sale_price || 0).toFixed(2) %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Estoque atual</span>
+            <strong class="<%= lowStock ? 'stock-danger' : 'stock-ok' %>"><%= part.current_stock %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Estoque mínimo</span>
+            <strong><%= part.min_stock %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Localização</span>
+            <strong><%= part.location || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Criado em</span>
+            <strong><%= part.created_at %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Descrição</span>
+            <strong><%= part.description || '-' %></strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

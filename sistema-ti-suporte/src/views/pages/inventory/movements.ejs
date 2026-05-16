@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Histórico de Movimentações</h2>
+            <p>Entradas, saídas e ajustes registrados no estoque.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/inventory/entry" class="btn btn-success">Entrada</a>
+            <a href="/inventory/exit" class="btn btn-danger">Saída</a>
+            <a href="/inventory/adjustment" class="btn btn-warning">Ajuste</a>
+            <a href="/inventory" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Peça</th>
+                <th>Tipo</th>
+                <th>Qtd</th>
+                <th>Valores</th>
+                <th>Usuário</th>
+                <th>Motivo</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (movements.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma movimentação registrada.</td>
+                </tr>
+              <% } %>
+
+              <% movements.forEach(function(movement) { %>
+                <tr>
+                  <td><%= movement.created_at %></td>
+
+                  <td>
+                    <strong><%= movement.part_name || '-' %></strong><br>
+                    <span class="text-muted">SKU: <%= movement.part_sku || '-' %></span>
+                  </td>
+
+                  <td>
+                    <% if (movement.movement_type === 'entry') { %>
+                      <span class="badge badge-success">Entrada</span>
+                    <% } else if (movement.movement_type === 'exit') { %>
+                      <span class="badge badge-danger">Saída</span>
+                    <% } else if (movement.movement_type === 'adjustment') { %>
+                      <span class="badge badge-warning">Ajuste</span>
+                    <% } else { %>
+                      <span class="badge badge-role"><%= movement.movement_type %></span>
+                    <% } %>
+                  </td>
+
+                  <td>
+                    <strong><%= movement.quantity %></strong>
+                  </td>
+
+                  <td>
+                    <span class="text-muted">Custo: R$ <%= Number(movement.unit_cost || 0).toFixed(2) %></span><br>
+                    <span class="text-muted">Venda: R$ <%= Number(movement.unit_price || 0).toFixed(2) %></span>
+                  </td>
+
+                  <td><%= movement.user_name || '-' %></td>
+                  <td><%= movement.reason || '-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

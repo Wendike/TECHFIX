@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Controle de Vendas</h2>
+            <p>Venda peças avulsas ou cobre serviços vinculados a reparos.</p>
+          </div>
+
+          <a href="/sales/create" class="btn btn-primary">Nova Venda</a>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Venda</th>
+                <th>Cliente</th>
+                <th>Origem</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Pagamento</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (sales.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma venda cadastrada.</td>
+                </tr>
+              <% } %>
+
+              <% sales.forEach(function(sale) { %>
+                <tr>
+                  <td>
+                    <strong>#<%= sale.id %></strong><br>
+                    <span class="text-muted"><%= sale.created_at %></span>
+                  </td>
+
+                  <td>
+                    <strong><%= sale.client_name || '-' %></strong><br>
+                    <span class="text-muted"><%= sale.client_phone || '-' %></span>
+                  </td>
+
+                  <td>
+                    <% if (sale.repair_id) { %>
+                      Reparo #<%= sale.repair_id %><br>
+                      <span class="text-muted"><%= sale.device_type || '' %> <%= sale.brand || '' %> <%= sale.model || '' %></span>
+                    <% } else { %>
+                      Venda avulsa
+                    <% } %>
+                  </td>
+
+                  <td>
+                    <strong>R$ <%= Number(sale.total_amount || 0).toFixed(2) %></strong><br>
+                    <span class="text-muted">Desc: R$ <%= Number(sale.discount || 0).toFixed(2) %></span>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[sale.status] || 'badge-role' %>">
+                      <%= statusLabels[sale.status] || sale.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <%= sale.payment_method || '-' %><br>
+                    <span class="text-muted"><%= sale.sold_at || '' %></span>
+                  </td>
+
+                  <td>
+                    <div class="actions">
+                      <a href="/sales/<%= sale.id %>" class="btn btn-small">Ver</a>
+                      <a href="/sales/<%= sale.id %>/edit" class="btn btn-small btn-warning">Editar</a>
+                    </div>
+
+                    <form method="POST" action="/sales/<%= sale.id %>/status" class="inline-status-form">
+                      <select name="status" class="small-select">
+                        <% statusOptions.forEach(function(option) { %>
+                          <option value="<%= option.value %>" <%= sale.status === option.value ? 'selected' : '' %>>
+                            <%= option.label %>
+                          </option>
+                        <% }) %>
+                      </select>
+
+                      <button type="submit" class="btn btn-small btn-primary">Atualizar</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

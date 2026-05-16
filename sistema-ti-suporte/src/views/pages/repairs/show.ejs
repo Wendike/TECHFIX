@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Detalhes do Reparo</h2>
+            <p>Resumo técnico, dispositivo, cliente, valores e andamento do serviço.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/repairs/<%= repair.id %>/edit" class="btn btn-warning">Editar</a>
+            <% if (repair.status !== 'finished' && repair.status !== 'cancelled') { %>
+              <a href="/repairs/<%= repair.id %>/finish" class="btn btn-success">Finalizar</a>
+            <% } %>
+            <a href="/repairs" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="status-box">
+          <div>
+            <span>Status do reparo</span>
+            <strong class="badge <%= statusClasses[repair.status] || 'badge-role' %>">
+              <%= statusLabels[repair.status] || repair.status %>
+            </strong>
+          </div>
+
+          <form method="POST" action="/repairs/<%= repair.id %>/status" class="status-change-form">
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= repair.status === option.value ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Alterar Status</button>
+          </form>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Cliente</span>
+            <strong><%= repair.client_name %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Contato</span>
+            <strong><%= repair.client_phone || repair.client_email || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Dispositivo</span>
+            <strong><%= repair.device_type %> - <%= repair.brand || '-' %> <%= repair.model || '' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Série / IMEI</span>
+            <strong><%= repair.serial_number || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Técnico responsável</span>
+            <strong><%= repair.technician_name || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Status do dispositivo</span>
+            <strong><%= repair.device_status || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Iniciado em</span>
+            <strong><%= repair.started_at || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Finalizado em</span>
+            <strong><%= repair.finished_at || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Defeito relatado pelo cliente</span>
+            <strong><%= repair.problem_description || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Diagnóstico técnico</span>
+            <strong><%= repair.diagnosis || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Solução proposta / aplicada</span>
+            <strong><%= repair.solution || '-' %></strong>
+          </div>
+        </div>
+      </section>
+
+      <% if (repair.status !== 'finished' && repair.status !== 'cancelled') { %>
+        <section class="panel panel-spaced">
+          <div class="panel-header">
+            <div>
+              <h2>Adicionar Peça ao Reparo</h2>
+              <p>Ao adicionar, a peça será baixada automaticamente do estoque.</p>
+            </div>
+          </div>
+
+          <form method="POST" action="/repairs/<%= repair.id %>/parts" class="form-grid">
+            <div class="form-group form-full">
+              <label>Peça *</label>
+              <select name="part_id" required>
+                <option value="">Selecione uma peça</option>
+                <% availableParts.forEach(function(part) { %>
+                  <option value="<%= part.id %>">
+                    <%= part.name %> | SKU: <%= part.sku || '-' %> | Estoque: <%= part.current_stock %> | Venda: R$ <%= Number(part.sale_price || 0).toFixed(2) %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Quantidade *</label>
+              <input type="number" name="quantity" min="1" value="1" required>
+            </div>
+
+            <div class="form-group">
+              <label>Valor unitário de venda</label>
+              <input type="number" name="unit_price" step="0.01" min="0" placeholder="Se vazio, usa o preço da peça">
+            </div>
+
+            <div class="form-group form-full">
+              <label>Observação</label>
+              <textarea name="reason" rows="3" placeholder="Ex: Peça usada na troca da tela, conector substituído..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-success">Adicionar Peça e Baixar Estoque</button>
+            </div>
+          </form>
+        </section>
+      <% } %>
+
+      <section class="panel panel-spaced">
+        <div class="panel-header">
+          <div>
+            <h2>Peças Usadas no Reparo</h2>
+            <p>Itens vinculados ao reparo com baixa automática no estoque.</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Peça</th>
+                <th>Qtd</th>
+                <th>Custo unitário</th>
+                <th>Venda unitária</th>
+                <th>Total</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (usedParts.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma peça usada neste reparo.</td>
+                </tr>
+              <% } %>
+
+              <% usedParts.forEach(function(used) { %>
+                <tr>
+                  <td>
+                    <strong><%= used.part_name %></strong><br>
+                    <span class="text-muted">SKU: <%= used.part_sku || '-' %></span><br>
+                    <span class="text-muted">Local: <%= used.location || '-' %></span>
+                  </td>
+
+                  <td><strong><%= used.quantity %></strong></td>
+                  <td>R$ <%= Number(used.unit_cost || 0).toFixed(2) %></td>
+                  <td>R$ <%= Number(used.unit_price || 0).toFixed(2) %></td>
+                  <td><strong>R$ <%= Number(used.total_price || 0).toFixed(2) %></strong></td>
+                  <td><%= used.created_at %></td>
+
+                  <td>
+                    <% if (repair.status !== 'finished' && repair.status !== 'cancelled') { %>
+                      <form method="POST" action="/repairs/<%= repair.id %>/parts/<%= used.id %>/delete">
+                        <button type="submit" class="btn btn-small btn-danger">Remover e devolver</button>
+                      </form>
+                    <% } else { %>
+                      <span class="text-muted">Bloqueado</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel panel-spaced">
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Mão de obra</span>
+            <strong>R$ <%= Number(repair.labor_cost || 0).toFixed(2) %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Peças usadas</span>
+            <strong>R$ <%= Number(repair.parts_cost || 0).toFixed(2) %></strong>
+          </div>
+
+          <div class="detail-item detail-full total-box">
+            <span>Total do reparo</span>
+            <strong>R$ <%= Number(repair.total_cost || 0).toFixed(2) %></strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

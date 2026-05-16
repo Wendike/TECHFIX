@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Relatório de Vendas</h2>
+            <p>Total de vendas: <strong><%= sales.length %></strong></p>
+          </div>
+
+          <div class="actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir</button>
+            <a href="/reports" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Venda</th>
+                <th>Cliente</th>
+                <th>Origem</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Pagamento</th>
+                <th>Responsável</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (sales.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma venda encontrada.</td>
+                </tr>
+              <% } %>
+
+              <% sales.forEach(function(sale) { %>
+                <tr>
+                  <td>
+                    <strong>#<%= sale.id %></strong><br>
+                    <span class="text-muted"><%= sale.created_at %></span>
+                  </td>
+
+                  <td>
+                    <strong><%= sale.client_name || '-' %></strong><br>
+                    <span class="text-muted"><%= sale.client_phone || '-' %></span>
+                  </td>
+
+                  <td>
+                    <% if (sale.repair_id) { %>
+                      Reparo #<%= sale.repair_id %><br>
+                      <span class="text-muted"><%= sale.device_type || '' %> <%= sale.brand || '' %> <%= sale.model || '' %></span>
+                    <% } else { %>
+                      Venda avulsa
+                    <% } %>
+                  </td>
+
+                  <td>
+                    <strong>R$ <%= Number(sale.total_amount || 0).toFixed(2) %></strong><br>
+                    <span class="text-muted">Desc: R$ <%= Number(sale.discount || 0).toFixed(2) %></span>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[sale.status] || 'badge-role' %>">
+                      <%= saleStatusLabels[sale.status] || sale.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <%= sale.payment_method || '-' %><br>
+                    <span class="text-muted"><%= sale.sold_at || '-' %></span>
+                  </td>
+
+                  <td><%= sale.user_name || '-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

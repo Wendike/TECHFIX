@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Cadastro de Peças</h2>
+            <p>Gerencie peças, fornecedores, preços, estoque atual, estoque mínimo e localização.</p>
+          </div>
+
+          <a href="/parts/create" class="btn btn-primary">Nova Peça</a>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Peça</th>
+                <th>Fornecedor</th>
+                <th>Preços</th>
+                <th>Estoque</th>
+                <th>Localização</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (parts.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma peça cadastrada.</td>
+                </tr>
+              <% } %>
+
+              <% parts.forEach(function(part) { %>
+                <% const lowStock = Number(part.min_stock) > 0 && Number(part.current_stock) <= Number(part.min_stock); %>
+
+                <tr>
+                  <td>
+                    <strong><%= part.name %></strong><br>
+                    <span class="text-muted">SKU: <%= part.sku || '-' %></span><br>
+                    <span class="text-muted">Categoria: <%= part.category || '-' %></span>
+                  </td>
+
+                  <td>
+                    <%= part.supplier_name || '-' %>
+                  </td>
+
+                  <td>
+                    <span class="text-muted">Custo: R$ <%= Number(part.cost_price || 0).toFixed(2) %></span><br>
+                    <strong>Venda: R$ <%= Number(part.sale_price || 0).toFixed(2) %></strong>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= lowStock ? 'badge-warning' : 'badge-success' %>">
+                      Atual: <%= part.current_stock %>
+                    </span>
+                    <br>
+                    <span class="text-muted">Mínimo: <%= part.min_stock %></span>
+                  </td>
+
+                  <td><%= part.location || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= part.status === 'active' ? 'badge-success' : 'badge-danger' %>">
+                      <%= part.status === 'active' ? 'Ativo' : 'Inativo' %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="actions">
+                      <a href="/parts/<%= part.id %>" class="btn btn-small">Ver</a>
+                      <a href="/parts/<%= part.id %>/edit" class="btn btn-small btn-warning">Editar</a>
+
+                      <form method="POST" action="/parts/<%= part.id %>/status">
+                        <button type="submit" class="btn btn-small <%= part.status === 'active' ? 'btn-danger' : 'btn-success' %>">
+                          <%= part.status === 'active' ? 'Inativar' : 'Ativar' %>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

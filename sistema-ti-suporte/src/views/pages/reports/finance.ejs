@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Relatório Financeiro</h2>
+            <p>Total de transações: <strong><%= transactions.length %></strong></p>
+          </div>
+
+          <div class="actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir</button>
+            <a href="/reports" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Categoria</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Pagamento</th>
+                <th>Origem</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (transactions.length === 0) { %>
+                <tr>
+                  <td colspan="8" class="empty-table">Nenhuma transação encontrada.</td>
+                </tr>
+              <% } %>
+
+              <% transactions.forEach(function(item) { %>
+                <tr>
+                  <td>
+                    <%= item.created_at %><br>
+                    <span class="text-muted">Venc: <%= item.due_date || '-' %></span>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[item.type] || 'badge-role' %>">
+                      <%= financeTypeLabels[item.type] || item.type %>
+                    </span>
+                  </td>
+
+                  <td><%= item.category %></td>
+                  <td><%= item.description %></td>
+
+                  <td><strong>R$ <%= Number(item.amount || 0).toFixed(2) %></strong></td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[item.status] || 'badge-role' %>">
+                      <%= financeStatusLabels[item.status] || item.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <%= item.payment_method || '-' %><br>
+                    <span class="text-muted">Pago em: <%= item.paid_at || '-' %></span>
+                  </td>
+
+                  <td>
+                    <% if (item.reference_type) { %>
+                      <%= item.reference_type %> #<%= item.reference_id %>
+                    <% } else { %>
+                      Manual
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

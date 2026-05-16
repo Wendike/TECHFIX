@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Detalhes do Usuário</h2>
+            <p>Informações completas do cadastro.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/users/<%= userData.id %>/edit" class="btn btn-warning">Editar</a>
+            <a href="/users" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Nome</span>
+            <strong><%= userData.name %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>E-mail</span>
+            <strong><%= userData.email %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Perfil</span>
+            <strong><%= userData.role %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Status</span>
+            <strong><%= userData.status === 'active' ? 'Ativo' : 'Inativo' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Telefone</span>
+            <strong><%= userData.phone || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Documento</span>
+            <strong><%= userData.document || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Último login</span>
+            <strong><%= userData.last_login_at || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Criado em</span>
+            <strong><%= userData.created_at %></strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Editar Usuário</h2>
+            <p>Atualize os dados e permissões do usuário.</p>
+          </div>
+
+          <a href="/users" class="btn">Voltar</a>
+        </div>
+
+        <form method="POST" action="/users/<%= userData.id %>/update" class="form-grid">
+          <div class="form-group">
+            <label>Nome *</label>
+            <input type="text" name="name" value="<%= userData.name %>" required>
+          </div>
+
+          <div class="form-group">
+            <label>E-mail *</label>
+            <input type="email" name="email" value="<%= userData.email %>" required>
+          </div>
+
+          <div class="form-group">
+            <label>Nova senha</label>
+            <input type="password" name="password" placeholder="Deixe em branco para manter">
+          </div>
+
+          <div class="form-group">
+            <label>Confirmar nova senha</label>
+            <input type="password" name="password_confirmation" placeholder="Deixe em branco para manter">
+          </div>
+
+          <div class="form-group">
+            <label>Perfil *</label>
+            <select name="role" required>
+              <% roles.forEach(function(role) { %>
+                <option value="<%= role.value %>" <%= userData.role === role.value ? 'selected' : '' %>>
+                  <%= role.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Status *</label>
+            <select name="status" required>
+              <% statuses.forEach(function(status) { %>
+                <option value="<%= status.value %>" <%= userData.status === status.value ? 'selected' : '' %>>
+                  <%= status.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="text" name="phone" value="<%= userData.phone || '' %>">
+          </div>
+
+          <div class="form-group">
+            <label>Documento</label>
+            <input type="text" name="document" value="<%= userData.document || '' %>">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Atualizar Usuário</button>
+            <a href="/users" class="btn">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

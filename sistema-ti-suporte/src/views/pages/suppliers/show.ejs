@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Detalhes do Fornecedor</h2>
+            <p>Informações completas do fornecedor.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/suppliers/<%= supplier.id %>/edit" class="btn btn-warning">Editar</a>
+            <a href="/suppliers" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Empresa / Fornecedor</span>
+            <strong><%= supplier.company_name %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Status</span>
+            <strong><%= supplier.status === 'active' ? 'Ativo' : 'Inativo' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Nome do contato</span>
+            <strong><%= supplier.contact_name || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>E-mail</span>
+            <strong><%= supplier.email || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Telefone</span>
+            <strong><%= supplier.phone || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>CNPJ / CPF</span>
+            <strong><%= supplier.document || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Usuário vinculado</span>
+            <strong>
+              <% if (supplier.user_name) { %>
+                <%= supplier.user_name %> - <%= supplier.user_email %>
+              <% } else { %>
+                Sem vínculo
+              <% } %>
+            </strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Endereço</span>
+            <strong><%= supplier.address || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Cidade/Estado</span>
+            <strong><%= supplier.city || '-' %><%= supplier.state ? ' - ' + supplier.state : '' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>CEP</span>
+            <strong><%= supplier.zip_code || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Criado em</span>
+            <strong><%= supplier.created_at %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Observações</span>
+            <strong><%= supplier.notes || '-' %></strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

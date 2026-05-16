@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Relatório de Estoque</h2>
+            <p>Total de peças: <strong><%= parts.length %></strong></p>
+          </div>
+
+          <div class="actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir</button>
+            <a href="/reports" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Peça</th>
+                <th>Fornecedor</th>
+                <th>Estoque</th>
+                <th>Valores</th>
+                <th>Total estimado</th>
+                <th>Localização</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (parts.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma peça encontrada.</td>
+                </tr>
+              <% } %>
+
+              <% parts.forEach(function(part) { %>
+                <% const lowStock = Number(part.min_stock) > 0 && Number(part.current_stock) <= Number(part.min_stock); %>
+                <tr>
+                  <td>
+                    <strong><%= part.name %></strong><br>
+                    <span class="text-muted">SKU: <%= part.sku || '-' %></span><br>
+                    <span class="text-muted">Categoria: <%= part.category || '-' %></span>
+                  </td>
+
+                  <td><%= part.supplier_name || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= lowStock ? 'badge-warning' : 'badge-success' %>">
+                      Atual: <%= part.current_stock %>
+                    </span><br>
+                    <span class="text-muted">Mínimo: <%= part.min_stock %></span>
+                  </td>
+
+                  <td>
+                    Custo: R$ <%= Number(part.cost_price || 0).toFixed(2) %><br>
+                    <strong>Venda: R$ <%= Number(part.sale_price || 0).toFixed(2) %></strong>
+                  </td>
+
+                  <td>
+                    Custo: R$ <%= Number((part.current_stock || 0) * (part.cost_price || 0)).toFixed(2) %><br>
+                    <strong>Venda: R$ <%= Number((part.current_stock || 0) * (part.sale_price || 0)).toFixed(2) %></strong>
+                  </td>
+
+                  <td><%= part.location || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[part.status] || 'badge-role' %>">
+                      <%= part.status === 'active' ? 'Ativo' : 'Inativo' %>
+                    </span>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

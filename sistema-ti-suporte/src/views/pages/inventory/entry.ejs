@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Entrada de Estoque</h2>
+            <p>Adicione unidades ao estoque atual de uma peça.</p>
+          </div>
+
+          <a href="/inventory" class="btn">Voltar</a>
+        </div>
+
+        <form method="POST" action="/inventory/entry" class="form-grid">
+          <div class="form-group">
+            <label>Peça *</label>
+            <select name="part_id" required>
+              <option value="">Selecione uma peça</option>
+              <% parts.forEach(function(part) { %>
+                <option value="<%= part.id %>" <%= Number(selectedPartId) === Number(part.id) ? 'selected' : '' %>>
+                  <%= part.name %> | Estoque atual: <%= part.current_stock %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Quantidade de entrada *</label>
+            <input type="number" name="quantity" min="1" required>
+          </div>
+
+          <div class="form-group">
+            <label>Custo unitário</label>
+            <input type="number" name="unit_cost" step="0.01" min="0" value="0">
+          </div>
+
+          <div class="form-group form-full">
+            <label>Motivo / Observação</label>
+            <textarea name="reason" rows="4" placeholder="Ex: Compra de peças, reposição de fornecedor, devolução..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success">Registrar Entrada</button>
+            <a href="/inventory" class="btn">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Relatório de Clientes</h2>
+            <p>Total de clientes: <strong><%= clients.length %></strong></p>
+          </div>
+
+          <div class="actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir</button>
+            <a href="/reports" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Contato</th>
+                <th>Documento</th>
+                <th>Endereço</th>
+                <th>Usuário vinculado</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (clients.length === 0) { %>
+                <tr>
+                  <td colspan="6" class="empty-table">Nenhum cliente encontrado.</td>
+                </tr>
+              <% } %>
+
+              <% clients.forEach(function(client) { %>
+                <tr>
+                  <td>
+                    <strong><%= client.name %></strong><br>
+                    <span class="text-muted">Criado em: <%= client.created_at %></span>
+                  </td>
+
+                  <td>
+                    <%= client.email || '-' %><br>
+                    <span class="text-muted"><%= client.phone || '-' %></span>
+                  </td>
+
+                  <td><%= client.document || '-' %></td>
+
+                  <td>
+                    <%= client.address || '-' %><br>
+                    <span class="text-muted"><%= client.city || '' %><%= client.state ? ' / ' + client.state : '' %></span>
+                  </td>
+
+                  <td>
+                    <% if (client.user_name) { %>
+                      <%= client.user_name %><br>
+                      <span class="text-muted"><%= client.user_email %></span>
+                    <% } else { %>
+                      <span class="text-muted">Sem vínculo</span>
+                    <% } %>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[client.status] || 'badge-role' %>">
+                      <%= client.status === 'active' ? 'Ativo' : 'Inativo' %>
+                    </span>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

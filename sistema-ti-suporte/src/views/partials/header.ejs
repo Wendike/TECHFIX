@@ -1,0 +1,19 @@
+<header class="topbar">
+  <div>
+    <h1><%= title || appName %></h1>
+    <p>Sistema de suporte, manutenção, estoque e financeiro</p>
+  </div>
+
+  <% if (user) { %>
+    <div class="user-area">
+      <div>
+        <strong><%= user.name %></strong>
+        <span><%= user.role %></span>
+      </div>
+
+      <form method="POST" action="/logout">
+        <button type="submit" class="logout-btn">Sair</button>
+      </form>
+    </div>
+  <% } %>
+</header>

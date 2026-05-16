@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Controle de Entregas</h2>
+            <p>Registre a retirada de dispositivos reparados, responsável pela entrega e quem recebeu.</p>
+          </div>
+
+          <a href="/deliveries/create" class="btn btn-primary">Nova Entrega</a>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Cliente</th>
+                <th>Recebido por</th>
+                <th>Entregue por</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (deliveries.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhuma entrega registrada.</td>
+                </tr>
+              <% } %>
+
+              <% deliveries.forEach(function(delivery) { %>
+                <tr>
+                  <td>
+                    <strong><%= delivery.device_type %></strong><br>
+                    <span class="text-muted"><%= delivery.brand || '-' %> <%= delivery.model || '' %></span><br>
+                    <span class="text-muted">Série: <%= delivery.serial_number || '-' %></span>
+                  </td>
+
+                  <td>
+                    <strong><%= delivery.client_name %></strong><br>
+                    <span class="text-muted"><%= delivery.client_phone || '-' %></span>
+                  </td>
+
+                  <td><%= delivery.received_by_name || '-' %></td>
+                  <td><%= delivery.delivered_by_name || '-' %></td>
+                  <td><%= delivery.delivery_date || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[delivery.status] || 'badge-role' %>">
+                      <%= statusLabels[delivery.status] || delivery.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="actions">
+                      <a href="/deliveries/<%= delivery.id %>" class="btn btn-small">Ver</a>
+                      <a href="/deliveries/<%= delivery.id %>/edit" class="btn btn-small btn-warning">Editar</a>
+                    </div>
+
+                    <form method="POST" action="/deliveries/<%= delivery.id %>/status" class="inline-status-form">
+                      <select name="status" class="small-select">
+                        <% statusOptions.forEach(function(option) { %>
+                          <option value="<%= option.value %>" <%= delivery.status === option.value ? 'selected' : '' %>>
+                            <%= option.label %>
+                          </option>
+                        <% }) %>
+                      </select>
+
+                      <button type="submit" class="btn btn-small btn-primary">Atualizar</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

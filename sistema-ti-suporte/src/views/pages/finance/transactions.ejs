@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Transações Financeiras</h2>
+            <p>Entradas, saídas, pagamentos, recebimentos e movimentações geradas por vendas.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/finance/create" class="btn btn-primary">Nova Transação</a>
+            <a href="/finance" class="btn">Resumo</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Categoria</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Pagamento</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (transactions.length === 0) { %>
+                <tr>
+                  <td colspan="8" class="empty-table">Nenhuma transação cadastrada.</td>
+                </tr>
+              <% } %>
+
+              <% transactions.forEach(function(item) { %>
+                <tr>
+                  <td>
+                    <%= item.created_at %><br>
+                    <span class="text-muted">Venc: <%= item.due_date || '-' %></span>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= typeClasses[item.type] || 'badge-role' %>">
+                      <%= typeLabels[item.type] || item.type %>
+                    </span>
+                  </td>
+
+                  <td><%= item.category %></td>
+                  <td>
+                    <%= item.description %><br>
+                    <span class="text-muted">
+                      <% if (item.reference_type) { %>
+                        Origem: <%= item.reference_type %> #<%= item.reference_id %>
+                      <% } else { %>
+                        Origem: Manual
+                      <% } %>
+                    </span>
+                  </td>
+
+                  <td><strong>R$ <%= Number(item.amount || 0).toFixed(2) %></strong></td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[item.status] || 'badge-role' %>">
+                      <%= statusLabels[item.status] || item.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <%= item.payment_method || '-' %><br>
+                    <span class="text-muted">Pago em: <%= item.paid_at || '-' %></span>
+                  </td>
+
+                  <td>
+                    <div class="actions">
+                      <a href="/finance/<%= item.id %>" class="btn btn-small">Ver</a>
+                      <a href="/finance/<%= item.id %>/edit" class="btn btn-small btn-warning">Editar</a>
+                    </div>
+
+                    <form method="POST" action="/finance/<%= item.id %>/status" class="inline-status-form">
+                      <select name="status" class="small-select">
+                        <% statusOptions.forEach(function(option) { %>
+                          <option value="<%= option.value %>" <%= item.status === option.value ? 'selected' : '' %>>
+                            <%= option.label %>
+                          </option>
+                        <% }) %>
+                      </select>
+
+                      <button type="submit" class="btn btn-small btn-primary">Atualizar</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

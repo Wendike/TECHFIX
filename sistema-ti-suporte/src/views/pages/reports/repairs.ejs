@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Relatório de Reparos</h2>
+            <p>Total de reparos: <strong><%= repairs.length %></strong></p>
+          </div>
+
+          <div class="actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary">Imprimir</button>
+            <a href="/reports" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Cliente</th>
+                <th>Técnico</th>
+                <th>Diagnóstico</th>
+                <th>Valores</th>
+                <th>Status</th>
+                <th>Datas</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (repairs.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhum reparo encontrado.</td>
+                </tr>
+              <% } %>
+
+              <% repairs.forEach(function(repair) { %>
+                <tr>
+                  <td>
+                    <strong><%= repair.device_type %></strong><br>
+                    <span class="text-muted"><%= repair.brand || '-' %> <%= repair.model || '' %></span><br>
+                    <span class="text-muted">Série: <%= repair.serial_number || '-' %></span>
+                  </td>
+
+                  <td>
+                    <strong><%= repair.client_name %></strong><br>
+                    <span class="text-muted"><%= repair.client_phone || '-' %></span>
+                  </td>
+
+                  <td><%= repair.technician_name || '-' %></td>
+                  <td><%= repair.diagnosis || '-' %></td>
+
+                  <td>
+                    Mão de obra: R$ <%= Number(repair.labor_cost || 0).toFixed(2) %><br>
+                    Peças: R$ <%= Number(repair.parts_cost || 0).toFixed(2) %><br>
+                    <strong>Total: R$ <%= Number(repair.total_cost || 0).toFixed(2) %></strong>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[repair.status] || 'badge-role' %>">
+                      <%= repairStatusLabels[repair.status] || repair.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    Início: <%= repair.started_at || '-' %><br>
+                    <span class="text-muted">Fim: <%= repair.finished_at || '-' %></span>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

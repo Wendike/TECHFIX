@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Nova Venda</h2>
+            <p>Crie uma venda avulsa ou vinculada a um reparo já aberto/finalizado.</p>
+          </div>
+
+          <a href="/sales" class="btn">Voltar</a>
+        </div>
+
+        <form method="POST" action="/sales" class="form-grid">
+          <div class="form-group">
+            <label>Cliente</label>
+            <select name="client_id">
+              <option value="">Selecione um cliente</option>
+              <% clients.forEach(function(client) { %>
+                <option value="<%= client.id %>">
+                  <%= client.name %> - <%= client.phone || client.email || 'sem contato' %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Reparo vinculado</label>
+            <select name="repair_id">
+              <option value="">Venda avulsa, sem reparo</option>
+              <% repairs.forEach(function(repair) { %>
+                <option value="<%= repair.id %>">
+                  Reparo #<%= repair.id %> - <%= repair.client_name %> - <%= repair.device_type %> <%= repair.brand || '' %> <%= repair.model || '' %> - R$ <%= Number(repair.total_cost || 0).toFixed(2) %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Desconto</label>
+            <input type="number" name="discount" step="0.01" min="0" value="0">
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= option.value === 'draft' ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Forma de pagamento</label>
+            <input type="text" name="payment_method" placeholder="Ex: Pix, Dinheiro, Cartão, Boleto">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Criar Venda</button>
+            <a href="/sales" class="btn">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

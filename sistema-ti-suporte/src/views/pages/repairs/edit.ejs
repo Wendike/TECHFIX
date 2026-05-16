@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Editar Reparo</h2>
+            <p>Atualize diagnóstico, solução, valores, técnico responsável e status.</p>
+          </div>
+
+          <a href="/repairs" class="btn">Voltar</a>
+        </div>
+
+        <form method="POST" action="/repairs/<%= repair.id %>/update" class="form-grid">
+          <div class="form-group form-full">
+            <label>Dispositivo *</label>
+            <select name="device_id" required>
+              <% devices.forEach(function(device) { %>
+                <option value="<%= device.id %>" <%= Number(repair.device_id) === Number(device.id) ? 'selected' : '' %>>
+                  #<%= device.id %> - <%= device.client_name %> | <%= device.device_type %> <%= device.brand || '' %> <%= device.model || '' %> | <%= device.problem_description %>
+                </option>
+              <% }) %>
+
+              <% if (!devices.some(function(device) { return Number(device.id) === Number(repair.device_id); })) { %>
+                <option value="<%= repair.device_id %>" selected>
+                  #<%= repair.device_id %> - <%= repair.client_name %> | <%= repair.device_type %> <%= repair.brand || '' %> <%= repair.model || '' %>
+                </option>
+              <% } %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Técnico responsável</label>
+            <select name="technician_id">
+              <option value="">Sem técnico definido</option>
+              <% technicians.forEach(function(technician) { %>
+                <option value="<%= technician.id %>" <%= Number(repair.technician_id) === Number(technician.id) ? 'selected' : '' %>>
+                  <%= technician.name %> - <%= technician.role %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= repair.status === option.value ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Diagnóstico técnico *</label>
+            <textarea name="diagnosis" rows="5" required><%= repair.diagnosis || '' %></textarea>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Solução proposta / aplicada</label>
+            <textarea name="solution" rows="5"><%= repair.solution || '' %></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Valor da mão de obra</label>
+            <input type="number" name="labor_cost" step="0.01" min="0" value="<%= repair.labor_cost || 0 %>">
+          </div>
+
+          <div class="form-group">
+            <label>Valor das peças</label>
+            <input type="number" name="parts_cost" step="0.01" min="0" value="<%= repair.parts_cost || 0 %>">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Atualizar Reparo</button>
+            <a href="/repairs" class="btn">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

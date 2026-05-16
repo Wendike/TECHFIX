@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Controle de Reparos</h2>
+            <p>Gerencie diagnóstico, execução, custos, técnico responsável e finalização do serviço.</p>
+          </div>
+
+          <a href="/repairs/create" class="btn btn-primary">Novo Reparo</a>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Cliente</th>
+                <th>Diagnóstico</th>
+                <th>Técnico</th>
+                <th>Valores</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (repairs.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhum reparo cadastrado.</td>
+                </tr>
+              <% } %>
+
+              <% repairs.forEach(function(repair) { %>
+                <tr>
+                  <td>
+                    <strong><%= repair.device_type %></strong><br>
+                    <span class="text-muted">
+                      <%= repair.brand || '-' %> <%= repair.model || '' %>
+                    </span><br>
+                    <span class="text-muted">Série: <%= repair.serial_number || '-' %></span>
+                  </td>
+
+                  <td>
+                    <strong><%= repair.client_name %></strong><br>
+                    <span class="text-muted"><%= repair.client_phone || '-' %></span>
+                  </td>
+
+                  <td>
+                    <%= repair.diagnosis && repair.diagnosis.length > 80 ? repair.diagnosis.substring(0, 80) + '...' : repair.diagnosis || '-' %>
+                  </td>
+
+                  <td><%= repair.technician_name || '-' %></td>
+
+                  <td>
+                    <span class="text-muted">Mão de obra: R$ <%= Number(repair.labor_cost || 0).toFixed(2) %></span><br>
+                    <span class="text-muted">Peças: R$ <%= Number(repair.parts_cost || 0).toFixed(2) %></span><br>
+                    <strong>Total: R$ <%= Number(repair.total_cost || 0).toFixed(2) %></strong>
+                  </td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[repair.status] || 'badge-role' %>">
+                      <%= statusLabels[repair.status] || repair.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="actions">
+                      <a href="/repairs/<%= repair.id %>" class="btn btn-small">Ver</a>
+                      <a href="/repairs/<%= repair.id %>/edit" class="btn btn-small btn-warning">Editar</a>
+                      <% if (repair.status !== 'finished' && repair.status !== 'cancelled') { %>
+                        <a href="/repairs/<%= repair.id %>/finish" class="btn btn-small btn-success">Finalizar</a>
+                      <% } %>
+                    </div>
+
+                    <form method="POST" action="/repairs/<%= repair.id %>/status" class="inline-status-form">
+                      <select name="status" class="small-select">
+                        <% statusOptions.forEach(function(option) { %>
+                          <option value="<%= option.value %>" <%= repair.status === option.value ? 'selected' : '' %>>
+                            <%= option.label %>
+                          </option>
+                        <% }) %>
+                      </select>
+
+                      <button type="submit" class="btn btn-small btn-primary">Atualizar</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

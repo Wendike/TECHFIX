@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Detalhes da Venda #<%= sale.id %></h2>
+            <p>Cliente, reparo vinculado, itens vendidos, pagamento e total.</p>
+          </div>
+
+          <div class="actions">
+            <a href="/sales/<%= sale.id %>/edit" class="btn btn-warning">Editar</a>
+            <a href="/sales" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="status-box">
+          <div>
+            <span>Status da venda</span>
+            <strong class="badge <%= statusClasses[sale.status] || 'badge-role' %>">
+              <%= statusLabels[sale.status] || sale.status %>
+            </strong>
+          </div>
+
+          <form method="POST" action="/sales/<%= sale.id %>/status" class="status-change-form">
+            <select name="status">
+              <% statusOptions.forEach(function(option) { %>
+                <option value="<%= option.value %>" <%= sale.status === option.value ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Alterar Status</button>
+          </form>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Cliente</span>
+            <strong><%= sale.client_name || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Contato</span>
+            <strong><%= sale.client_phone || sale.client_email || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Forma de pagamento</span>
+            <strong><%= sale.payment_method || '-' %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Pago em</span>
+            <strong><%= sale.sold_at || '-' %></strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Reparo vinculado</span>
+            <strong>
+              <% if (sale.repair_id) { %>
+                Reparo #<%= sale.repair_id %> -
+                <%= sale.device_type || '' %> <%= sale.brand || '' %> <%= sale.model || '' %>
+                | Total do reparo: R$ <%= Number(sale.repair_total || 0).toFixed(2) %>
+              <% } else { %>
+                Venda avulsa, sem reparo vinculado
+              <% } %>
+            </strong>
+          </div>
+        </div>
+      </section>
+
+      <% if (sale.status !== 'paid' && sale.status !== 'cancelled') { %>
+        <section class="panel panel-spaced">
+          <div class="panel-header">
+            <div>
+              <h2>Adicionar Item à Venda</h2>
+              <p>Ao adicionar, a peça será baixada automaticamente do estoque.</p>
+            </div>
+          </div>
+
+          <form method="POST" action="/sales/<%= sale.id %>/items" class="form-grid">
+            <div class="form-group form-full">
+              <label>Peça *</label>
+              <select name="part_id" required>
+                <option value="">Selecione uma peça</option>
+                <% parts.forEach(function(part) { %>
+                  <option value="<%= part.id %>">
+                    <%= part.name %> | SKU: <%= part.sku || '-' %> | Estoque: <%= part.current_stock %> | Venda: R$ <%= Number(part.sale_price || 0).toFixed(2) %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Quantidade *</label>
+              <input type="number" name="quantity" min="1" value="1" required>
+            </div>
+
+            <div class="form-group">
+              <label>Valor unitário</label>
+              <input type="number" name="unit_price" step="0.01" min="0" placeholder="Se vazio, usa o preço da peça">
+            </div>
+
+            <div class="form-group form-full">
+              <label>Observação</label>
+              <textarea name="reason" rows="3" placeholder="Ex: Venda de peça avulsa, reposição para cliente..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-success">Adicionar Item e Baixar Estoque</button>
+            </div>
+          </form>
+        </section>
+      <% } %>
+
+      <section class="panel panel-spaced">
+        <div class="panel-header">
+          <div>
+            <h2>Itens da Venda</h2>
+            <p>Peças vendidas com baixa automática no estoque.</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Peça</th>
+                <th>Qtd</th>
+                <th>Valor unitário</th>
+                <th>Total</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (items.length === 0) { %>
+                <tr>
+                  <td colspan="6" class="empty-table">Nenhum item adicionado à venda.</td>
+                </tr>
+              <% } %>
+
+              <% items.forEach(function(item) { %>
+                <tr>
+                  <td>
+                    <strong><%= item.part_name || '-' %></strong><br>
+                    <span class="text-muted">SKU: <%= item.part_sku || '-' %></span><br>
+                    <span class="text-muted">Local: <%= item.location || '-' %></span>
+                  </td>
+
+                  <td><strong><%= item.quantity %></strong></td>
+                  <td>R$ <%= Number(item.unit_price || 0).toFixed(2) %></td>
+                  <td><strong>R$ <%= Number(item.total_price || 0).toFixed(2) %></strong></td>
+                  <td><%= item.created_at %></td>
+
+                  <td>
+                    <% if (sale.status !== 'paid' && sale.status !== 'cancelled') { %>
+                      <form method="POST" action="/sales/<%= sale.id %>/items/<%= item.id %>/delete">
+                        <button type="submit" class="btn btn-small btn-danger">Remover e devolver</button>
+                      </form>
+                    <% } else { %>
+                      <span class="text-muted">Bloqueado</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel panel-spaced">
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Total do reparo vinculado</span>
+            <strong>R$ <%= Number(sale.repair_total || 0).toFixed(2) %></strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Desconto</span>
+            <strong>R$ <%= Number(sale.discount || 0).toFixed(2) %></strong>
+          </div>
+
+          <div class="detail-item detail-full total-box">
+            <span>Total da venda</span>
+            <strong>R$ <%= Number(sale.total_amount || 0).toFixed(2) %></strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

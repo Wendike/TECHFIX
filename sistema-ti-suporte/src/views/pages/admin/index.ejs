@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="cards">
+        <div class="card">
+          <h2>Usuários</h2>
+          <p>Cadastrar administradores, usuários padrão, clientes e fornecedores.</p>
+        </div>
+
+        <div class="card">
+          <h2>Permissões</h2>
+          <p>Controlar níveis de acesso do sistema.</p>
+        </div>
+
+        <div class="card">
+          <h2>Backups</h2>
+          <p>Gerenciar cópias de segurança do banco SQLite.</p>
+        </div>
+
+        <div class="card">
+          <h2>Logs</h2>
+          <p>Auditoria de ações realizadas no sistema.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>
