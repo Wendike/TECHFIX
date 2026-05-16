@@ -10,13 +10,6 @@
     <main class="main-content">
       <%- include('../../partials/header') %>
 
-      <%
-        const role = user ? user.role : null;
-        const isAdmin = role === 'admin';
-        const isTechnician = role === 'standard';
-        const canOperate = isAdmin || isTechnician;
-      %>
-
       <% if (success && success.length) { %>
         <div class="alert alert-success">
           <% success.forEach(function(message) { %>
@@ -32,100 +25,86 @@
           <% }) %>
         </div>
       <% } %>
+
       <section class="quick-actions">
-        <% if (canOperate) { %>
-          <a href="/devices/create" class="quick-action-card">
-            <strong>Nova Entrada</strong>
-            <span>Registrar dispositivo com problema</span>
-          </a>
+        <a href="/devices/create" class="quick-action-card">
+          <strong>Nova Entrada</strong>
+          <span>Registrar dispositivo</span>
+        </a>
 
-          <a href="/repairs/create" class="quick-action-card">
-            <strong>Novo Reparo</strong>
-            <span>Abrir diagnóstico técnico</span>
-          </a>
+        <a href="/repairs/create" class="quick-action-card">
+          <strong>Novo Reparo</strong>
+          <span>Abrir diagnóstico</span>
+        </a>
 
-          <a href="/inventory/entry" class="quick-action-card">
-            <strong>Entrada Estoque</strong>
-            <span>Adicionar peças ao estoque</span>
-          </a>
+        <a href="/sales/create" class="quick-action-card">
+          <strong>Nova Venda</strong>
+          <span>Cobrar cliente</span>
+        </a>
 
-          <a href="/deliveries/create" class="quick-action-card">
-            <strong>Nova Entrega</strong>
-            <span>Registrar retirada de dispositivo</span>
-          </a>
-        <% } %>
+        <a href="/finance/create" class="quick-action-card">
+          <strong>Nova Transação</strong>
+          <span>Entrada ou saída</span>
+        </a>
 
-        <% if (isAdmin) { %>
-          <a href="/sales/create" class="quick-action-card">
-            <strong>Nova Venda</strong>
-            <span>Cobrar peças ou reparos</span>
-          </a>
+        <a href="/reports" class="quick-action-card">
+          <strong>Relatórios</strong>
+          <span>Dados completos</span>
+        </a>
 
-          <a href="/finance/create" class="quick-action-card">
-            <strong>Nova Transação</strong>
-            <span>Entrada ou saída manual</span>
-          </a>
-
-          <a href="/reports" class="quick-action-card">
-            <strong>Relatórios</strong>
-            <span>Consultar dados do sistema</span>
-          </a>
-
-          <a href="/admin/backups" class="quick-action-card">
-            <strong>Backup</strong>
-            <span>Criar cópia do banco SQLite</span>
-          </a>
-        <% } %>
+        <a href="/admin/backups" class="quick-action-card">
+          <strong>Backup</strong>
+          <span>Cópia do banco</span>
+        </a>
       </section>
 
-
       <section class="cards dashboard-cards">
-        <div class="card metric-card">
+        <div class="card">
           <span class="card-label">Clientes</span>
           <h2><%= stats.clients %></h2>
           <p>Total de clientes cadastrados.</p>
         </div>
 
-        <div class="card metric-card">
+        <div class="card">
           <span class="card-label">Dispositivos</span>
           <h2><%= stats.devices %></h2>
           <p>Aparelhos recebidos no sistema.</p>
         </div>
 
-        <div class="card metric-card">
+        <div class="card">
           <span class="card-label">Reparos em aberto</span>
           <h2><%= stats.repairsOpen %></h2>
-          <p>Serviços em andamento ou aguardando.</p>
+          <p>Serviços em andamento.</p>
         </div>
 
-        <div class="card metric-card">
+        <div class="card">
           <span class="card-label">Reparos finalizados</span>
           <h2><%= stats.repairsFinished %></h2>
           <p>Serviços concluídos.</p>
         </div>
 
-        <div class="card metric-card">
+        <div class="card">
           <span class="card-label">Unidades em estoque</span>
           <h2><%= stats.stockUnits %></h2>
-          <p>Soma total das peças disponíveis.</p>
+          <p>Peças disponíveis.</p>
         </div>
 
-        <div class="card metric-card <%= stats.lowStock > 0 ? 'metric-warning' : '' %>">
+        <div class="card">
           <span class="card-label">Estoque baixo</span>
           <h2><%= stats.lowStock %></h2>
-          <p>Peças abaixo ou no estoque mínimo.</p>
+          <p>Peças abaixo ou no mínimo.</p>
         </div>
 
-        <div class="card metric-card">
+        <div class="card">
           <span class="card-label">Vendas pagas</span>
           <h2><%= stats.salesPaid %></h2>
-          <p>Vendas já recebidas.</p>
+          <p>Vendas recebidas.</p>
         </div>
 
-        <div class="card metric-card">
+        <div class="card">
           <span class="card-label">Entregas</span>
           <h2><%= stats.deliveries %></h2>
-          <p>Dispositivos entregues ao cliente.</p>
+          <p>Dispositivos entregues.</p>
         </div>
       </section>
 
@@ -145,7 +124,7 @@
         <div class="card finance-card">
           <span class="card-label">Resultado do mês</span>
           <h2>R$ <%= Number(stats.monthBalance || 0).toFixed(2) %></h2>
-          <p>Receita menos despesas do mês.</p>
+          <p>Receita menos despesas.</p>
         </div>
 
         <div class="card finance-card">
@@ -154,7 +133,6 @@
           <p>Saldo financeiro acumulado.</p>
         </div>
       </section>
-
 
       <section class="dashboard-chart-grid">
         <div class="panel chart-panel">
@@ -174,7 +152,7 @@
           <div class="panel-header">
             <div>
               <h2>Vendas por Mês</h2>
-              <p>Quantidade de vendas pagas e valor vendido.</p>
+              <p>Quantidade e valor vendido.</p>
             </div>
           </div>
 
@@ -182,7 +160,9 @@
             <canvas id="salesEvolutionChart"></canvas>
           </div>
         </div>
+      </section>
 
+      <section class="dashboard-chart-grid">
         <div class="panel chart-panel">
           <div class="panel-header">
             <div>
@@ -215,7 +195,7 @@
           <div class="panel-header">
             <div>
               <h2>Status dos Dispositivos</h2>
-              <p>Distribuição atual por situação.</p>
+              <p>Distribuição atual.</p>
             </div>
           </div>
 
@@ -228,7 +208,7 @@
           <div class="panel-header">
             <div>
               <h2>Status dos Reparos</h2>
-              <p>Distribuição dos serviços técnicos.</p>
+              <p>Distribuição dos serviços.</p>
             </div>
           </div>
 
@@ -241,7 +221,7 @@
           <div class="panel-header">
             <div>
               <h2>Status das Vendas</h2>
-              <p>Rascunhos, pendentes, pagas e canceladas.</p>
+              <p>Distribuição das vendas.</p>
             </div>
           </div>
 
@@ -255,80 +235,8 @@
         <div class="panel dashboard-panel">
           <div class="panel-header">
             <div>
-              <h2>Alertas Importantes</h2>
-              <p>Pontos que precisam de atenção.</p>
-            </div>
-          </div>
-
-          <div class="alert-list">
-            <% if (stats.lowStock > 0) { %>
-              <a href="/inventory/low-stock" class="alert-item warning">
-                <strong>Estoque baixo</strong>
-                <span><%= stats.lowStock %> peça(s) abaixo ou no mínimo.</span>
-              </a>
-            <% } %>
-
-            <% if (stats.repairsOpen > 0) { %>
-              <a href="/repairs" class="alert-item info">
-                <strong>Reparos em aberto</strong>
-                <span><%= stats.repairsOpen %> serviço(s) aguardando andamento.</span>
-              </a>
-            <% } %>
-
-            <% if (waitingDeliveryDevices.length > 0) { %>
-              <a href="/deliveries/create" class="alert-item success">
-                <strong>Aguardando entrega</strong>
-                <span><%= waitingDeliveryDevices.length %> dispositivo(s) reparados para entregar.</span>
-              </a>
-            <% } %>
-
-            <% if (stats.salesPending > 0) { %>
-              <a href="/sales" class="alert-item warning">
-                <strong>Vendas pendentes</strong>
-                <span><%= stats.salesPending %> venda(s) aguardando pagamento.</span>
-              </a>
-            <% } %>
-
-            <% if (stats.lowStock === 0 && stats.repairsOpen === 0 && waitingDeliveryDevices.length === 0 && stats.salesPending === 0) { %>
-              <div class="alert-item success">
-                <strong>Tudo em ordem</strong>
-                <span>Nenhum alerta crítico no momento.</span>
-              </div>
-            <% } %>
-          </div>
-        </div>
-
-        <div class="panel dashboard-panel">
-          <div class="panel-header">
-            <div>
-              <h2>Aguardando Entrega</h2>
-              <p>Dispositivos reparados ainda não entregues.</p>
-            </div>
-
-            <a href="/deliveries/create" class="btn btn-small btn-primary">Registrar</a>
-          </div>
-
-          <div class="compact-list">
-            <% if (waitingDeliveryDevices.length === 0) { %>
-              <p class="empty-table">Nenhum dispositivo aguardando entrega.</p>
-            <% } %>
-
-            <% waitingDeliveryDevices.forEach(function(device) { %>
-              <a href="/devices/<%= device.id %>" class="compact-item">
-                <strong><%= device.device_type %> - <%= device.brand || '-' %> <%= device.model || '' %></strong>
-                <span><%= device.client_name %> · Série: <%= device.serial_number || '-' %></span>
-              </a>
-            <% }) %>
-          </div>
-        </div>
-      </section>
-
-      <section class="dashboard-grid">
-        <div class="panel dashboard-panel">
-          <div class="panel-header">
-            <div>
               <h2>Últimos Dispositivos</h2>
-              <p>Entradas recentes de aparelhos.</p>
+              <p>Entradas recentes.</p>
             </div>
 
             <a href="/devices" class="btn btn-small">Ver todos</a>
@@ -391,7 +299,6 @@
                 <tr>
                   <th>Reparo</th>
                   <th>Técnico</th>
-                  <th>Total</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -399,7 +306,7 @@
               <tbody>
                 <% if (latestRepairs.length === 0) { %>
                   <tr>
-                    <td colspan="4" class="empty-table">Nenhum reparo cadastrado.</td>
+                    <td colspan="3" class="empty-table">Nenhum reparo cadastrado.</td>
                   </tr>
                 <% } %>
 
@@ -411,8 +318,6 @@
                     </td>
 
                     <td><%= repair.technician_name || '-' %></td>
-
-                    <td><strong>R$ <%= Number(repair.total_cost || 0).toFixed(2) %></strong></td>
 
                     <td>
                       <span class="badge <%= statusClasses[repair.status] || 'badge-role' %>">
@@ -476,41 +381,41 @@
         <div class="panel dashboard-panel">
           <div class="panel-header">
             <div>
-              <h2>Estoque Baixo</h2>
-              <p>Peças que precisam de reposição.</p>
+              <h2>Movimentações Financeiras</h2>
+              <p>Últimas entradas e saídas.</p>
             </div>
 
-            <a href="/inventory/low-stock" class="btn btn-small">Ver estoque</a>
+            <a href="/finance/transactions" class="btn btn-small">Ver financeiro</a>
           </div>
 
           <div class="table-wrapper">
             <table>
               <thead>
                 <tr>
-                  <th>Peça</th>
-                  <th>Fornecedor</th>
-                  <th>Atual</th>
-                  <th>Mínimo</th>
+                  <th>Data</th>
+                  <th>Tipo</th>
+                  <th>Categoria</th>
+                  <th>Valor</th>
                 </tr>
               </thead>
 
               <tbody>
-                <% if (lowStockParts.length === 0) { %>
+                <% if (latestTransactions.length === 0) { %>
                   <tr>
-                    <td colspan="4" class="empty-table">Nenhuma peça em estoque baixo.</td>
+                    <td colspan="4" class="empty-table">Nenhuma movimentação financeira.</td>
                   </tr>
                 <% } %>
 
-                <% lowStockParts.forEach(function(part) { %>
+                <% latestTransactions.forEach(function(item) { %>
                   <tr>
+                    <td><%= item.created_at %></td>
                     <td>
-                      <strong><%= part.name %></strong><br>
-                      <span class="text-muted">SKU: <%= part.sku || '-' %></span>
+                      <span class="badge <%= statusClasses[item.type] || 'badge-role' %>">
+                        <%= item.type === 'income' ? 'Receita' : 'Despesa' %>
+                      </span>
                     </td>
-
-                    <td><%= part.supplier_name || '-' %></td>
-                    <td><span class="badge badge-warning"><%= part.current_stock %></span></td>
-                    <td><%= part.min_stock %></td>
+                    <td><%= item.category %></td>
+                    <td><strong>R$ <%= Number(item.amount || 0).toFixed(2) %></strong></td>
                   </tr>
                 <% }) %>
               </tbody>
@@ -518,72 +423,14 @@
           </div>
         </div>
       </section>
-
-      <section class="panel dashboard-panel panel-spaced">
-        <div class="panel-header">
-          <div>
-            <h2>Últimas Movimentações Financeiras</h2>
-            <p>Entradas e saídas recentes do caixa.</p>
-          </div>
-
-          <a href="/finance/transactions" class="btn btn-small">Ver financeiro</a>
-        </div>
-
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Tipo</th>
-                <th>Categoria</th>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <% if (latestTransactions.length === 0) { %>
-                <tr>
-                  <td colspan="6" class="empty-table">Nenhuma movimentação financeira.</td>
-                </tr>
-              <% } %>
-
-              <% latestTransactions.forEach(function(item) { %>
-                <tr>
-                  <td><%= item.created_at %></td>
-
-                  <td>
-                    <span class="badge <%= statusClasses[item.type] || 'badge-role' %>">
-                      <%= item.type === 'income' ? 'Receita' : 'Despesa' %>
-                    </span>
-                  </td>
-
-                  <td><%= item.category %></td>
-                  <td><%= item.description %></td>
-                  <td><strong>R$ <%= Number(item.amount || 0).toFixed(2) %></strong></td>
-
-                  <td>
-                    <span class="badge <%= statusClasses[item.status] || 'badge-role' %>">
-                      <%= item.status === 'paid' ? 'Pago' : item.status === 'pending' ? 'Pendente' : 'Cancelado' %>
-                    </span>
-                  </td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
-      </section>
     </main>
   </div>
-
 
   <script src="/vendor/chartjs/chart.umd.js"></script>
   <script>
     window.dashboardCharts = <%- JSON.stringify(dashboardCharts || {}) %>;
   </script>
   <script src="/js/dashboard-charts.js"></script>
-
   <%- include('../../partials/scripts') %>
 </body>
 </html>

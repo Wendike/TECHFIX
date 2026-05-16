@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Backups do Sistema</h2>
+            <p>Crie uma cópia segura do banco SQLite antes de alterações importantes.</p>
+          </div>
+
+          <div class="actions">
+            <form method="POST" action="/admin/backups/create">
+              <button type="submit" class="btn btn-primary">Criar Backup Agora</button>
+            </form>
+
+            <a href="/admin" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="backup-info">
+          <strong>Local dos backups:</strong>
+          <span>storage/backups</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Arquivo</th>
+                <th>Tamanho</th>
+                <th>Criado em</th>
+                <th>Modificado em</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (backups.length === 0) { %>
+                <tr>
+                  <td colspan="5" class="empty-table">Nenhum backup encontrado.</td>
+                </tr>
+              <% } %>
+
+              <% backups.forEach(function(backup) { %>
+                <tr>
+                  <td>
+                    <strong><%= backup.filename %></strong>
+                  </td>
+
+                  <td><%= backup.size_label %></td>
+                  <td><%= backup.created_at.toLocaleString('pt-BR') %></td>
+                  <td><%= backup.modified_at.toLocaleString('pt-BR') %></td>
+
+                  <td>
+                    <div class="actions">
+                      <a href="/admin/backups/<%= backup.filename %>/download" class="btn btn-small btn-success">
+                        Baixar
+                      </a>
+
+                      <form method="POST" action="/admin/backups/<%= backup.filename %>/delete">
+                        <button type="submit" class="btn btn-small btn-danger">
+                          Excluir
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

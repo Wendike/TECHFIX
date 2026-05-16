@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="quick-actions">
+        <a href="/devices/create" class="quick-action-card"><strong>Nova Entrada</strong><span>Registrar dispositivo</span></a>
+        <a href="/repairs/create" class="quick-action-card"><strong>Novo Reparo</strong><span>Abrir diagnóstico</span></a>
+        <a href="/repairs" class="quick-action-card"><strong>Reparos</strong><span>Acompanhar serviços</span></a>
+        <a href="/inventory" class="quick-action-card"><strong>Estoque</strong><span>Consultar peças</span></a>
+        <a href="/deliveries/create" class="quick-action-card"><strong>Entrega</strong><span>Registrar retirada</span></a>
+      </section>
+
+      <section class="cards dashboard-cards">
+        <div class="card"><span class="card-label">Dispositivos</span><h2><%= stats.devices %></h2><p>Aparelhos cadastrados.</p></div>
+        <div class="card"><span class="card-label">Recebidos</span><h2><%= stats.devicesReceived %></h2><p>Aguardando atendimento.</p></div>
+        <div class="card"><span class="card-label">Em reparo</span><h2><%= stats.devicesRepairing %></h2><p>Dispositivos em serviço.</p></div>
+        <div class="card"><span class="card-label">Reparados</span><h2><%= stats.devicesRepaired %></h2><p>Aguardando entrega.</p></div>
+        <div class="card"><span class="card-label">Reparos em aberto</span><h2><%= stats.repairsOpen %></h2><p>Serviços em andamento.</p></div>
+        <div class="card"><span class="card-label">Reparos finalizados</span><h2><%= stats.repairsFinished %></h2><p>Serviços concluídos.</p></div>
+        <div class="card"><span class="card-label">Estoque baixo</span><h2><%= stats.lowStock %></h2><p>Peças no mínimo.</p></div>
+        <div class="card"><span class="card-label">Aguardando entrega</span><h2><%= stats.waitingDelivery %></h2><p>Aparelhos prontos.</p></div>
+      </section>
+
+      <section class="dashboard-chart-grid">
+        <div class="panel chart-panel">
+          <div class="panel-header"><div><h2>Dispositivos Recebidos</h2><p>Evolução das entradas.</p></div></div>
+          <div class="chart-box"><canvas id="devicesEvolutionChart"></canvas></div>
+        </div>
+
+        <div class="panel chart-panel">
+          <div class="panel-header"><div><h2>Reparos</h2><p>Abertos versus finalizados.</p></div></div>
+          <div class="chart-box"><canvas id="repairsEvolutionChart"></canvas></div>
+        </div>
+      </section>
+
+      <section class="dashboard-chart-grid dashboard-chart-grid-small">
+        <div class="panel chart-panel">
+          <div class="panel-header"><div><h2>Status dos Dispositivos</h2><p>Distribuição atual.</p></div></div>
+          <div class="chart-box chart-box-small"><canvas id="deviceStatusChart"></canvas></div>
+        </div>
+
+        <div class="panel chart-panel">
+          <div class="panel-header"><div><h2>Status dos Reparos</h2><p>Distribuição dos serviços.</p></div></div>
+          <div class="chart-box chart-box-small"><canvas id="repairStatusChart"></canvas></div>
+        </div>
+      </section>
+
+      <section class="dashboard-grid">
+        <div class="panel dashboard-panel">
+          <div class="panel-header"><div><h2>Últimos Dispositivos</h2><p>Entradas recentes.</p></div></div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Dispositivo</th><th>Cliente</th><th>Status</th></tr></thead>
+              <tbody>
+                <% if (latestDevices.length === 0) { %>
+                  <tr><td colspan="3" class="empty-table">Nenhum dispositivo cadastrado.</td></tr>
+                <% } %>
+
+                <% latestDevices.forEach(function(device) { %>
+                  <tr>
+                    <td><strong><%= device.device_type %></strong><br><span class="text-muted"><%= device.brand || '-' %> <%= device.model || '' %></span></td>
+                    <td><%= device.client_name %><br><span class="text-muted"><%= device.client_phone || '-' %></span></td>
+                    <td><span class="badge <%= statusClasses[device.status] || 'badge-role' %>"><%= deviceStatusLabels[device.status] || device.status %></span></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel dashboard-panel">
+          <div class="panel-header"><div><h2>Últimos Reparos</h2><p>Serviços técnicos recentes.</p></div></div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Reparo</th><th>Técnico</th><th>Status</th></tr></thead>
+              <tbody>
+                <% if (latestRepairs.length === 0) { %>
+                  <tr><td colspan="3" class="empty-table">Nenhum reparo encontrado.</td></tr>
+                <% } %>
+
+                <% latestRepairs.forEach(function(repair) { %>
+                  <tr>
+                    <td><strong>#<%= repair.id %> - <%= repair.client_name %></strong><br><span class="text-muted"><%= repair.device_type %> <%= repair.brand || '' %> <%= repair.model || '' %></span></td>
+                    <td><%= repair.technician_name || '-' %></td>
+                    <td><span class="badge <%= statusClasses[repair.status] || 'badge-role' %>"><%= repairStatusLabels[repair.status] || repair.status %></span></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-grid">
+        <div class="panel dashboard-panel">
+          <div class="panel-header"><div><h2>Estoque Baixo</h2><p>Peças que precisam de reposição.</p></div></div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Peça</th><th>Fornecedor</th><th>Atual</th><th>Mínimo</th></tr></thead>
+              <tbody>
+                <% if (lowStockParts.length === 0) { %>
+                  <tr><td colspan="4" class="empty-table">Nenhuma peça em estoque baixo.</td></tr>
+                <% } %>
+
+                <% lowStockParts.forEach(function(part) { %>
+                  <tr>
+                    <td><strong><%= part.name %></strong><br><span class="text-muted">SKU: <%= part.sku || '-' %></span></td>
+                    <td><%= part.supplier_name || '-' %></td>
+                    <td><span class="badge badge-warning"><%= part.current_stock %></span></td>
+                    <td><%= part.min_stock %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel dashboard-panel">
+          <div class="panel-header"><div><h2>Aguardando Entrega</h2><p>Dispositivos reparados.</p></div></div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Dispositivo</th><th>Cliente</th><th>Série</th></tr></thead>
+              <tbody>
+                <% if (waitingDeliveryDevices.length === 0) { %>
+                  <tr><td colspan="3" class="empty-table">Nenhum dispositivo aguardando entrega.</td></tr>
+                <% } %>
+
+                <% waitingDeliveryDevices.forEach(function(device) { %>
+                  <tr>
+                    <td><strong><%= device.device_type %></strong><br><span class="text-muted"><%= device.brand || '-' %> <%= device.model || '' %></span></td>
+                    <td><%= device.client_name %></td>
+                    <td><%= device.serial_number || '-' %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/vendor/chartjs/chart.umd.js"></script>
+  <script>
+    window.dashboardCharts = <%- JSON.stringify(dashboardCharts || {}) %>;
+  </script>
+  <script src="/js/dashboard-charts.js"></script>
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

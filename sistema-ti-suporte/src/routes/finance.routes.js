@@ -2,8 +2,12 @@ const express = require('express');
 
 const FinanceController = require('../controllers/FinanceController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 const router = express.Router();
+
+router.use(roleMiddleware('admin'));
+
 
 router.get('/', authMiddleware, FinanceController.index);
 router.get('/transactions', authMiddleware, FinanceController.transactions);

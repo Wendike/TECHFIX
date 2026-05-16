@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body class="auth-page">
+  <main class="auth-container">
+    <section class="auth-card auth-card-wide">
+      <div class="auth-brand">
+        <h1>TECHFIX</h1>
+        <p>Primeiro acesso de cliente</p>
+      </div>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <div class="login-help">
+        <strong>Acesso de Cliente</strong>
+        <p>
+          Esta área é exclusiva para clientes criarem o próprio acesso.
+          Técnicos devem ser cadastrados pelo administrador em Usuários.
+        </p>
+      </div>
+
+      <form method="POST" action="/first-access" class="form-grid">
+        <div class="form-group">
+          <label>Nome completo *</label>
+          <input type="text" name="name" required placeholder="Seu nome completo">
+        </div>
+
+        <div class="form-group">
+          <label>E-mail *</label>
+          <input type="email" name="email" required placeholder="seu@email.com">
+        </div>
+
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="text" name="phone" placeholder="(00) 00000-0000">
+        </div>
+
+        <div class="form-group">
+          <label>Documento</label>
+          <input type="text" name="document" placeholder="CPF ou CNPJ">
+        </div>
+
+        <div class="form-group">
+          <label>Cidade</label>
+          <input type="text" name="city" placeholder="Cidade">
+        </div>
+
+        <div class="form-group">
+          <label>Estado</label>
+          <input type="text" name="state" placeholder="UF">
+        </div>
+
+        <div class="form-group form-full">
+          <label>Endereço</label>
+          <input type="text" name="address" placeholder="Rua, número, bairro">
+        </div>
+
+        <div class="form-group">
+          <label>Senha *</label>
+          <input type="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres">
+        </div>
+
+        <div class="form-group">
+          <label>Confirmar senha *</label>
+          <input type="password" name="password_confirmation" required minlength="6" placeholder="Repita a senha">
+        </div>
+
+        <div class="form-actions form-full">
+          <button type="submit" class="btn btn-primary">Criar acesso de cliente</button>
+          <a href="/login" class="btn">Voltar ao login</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

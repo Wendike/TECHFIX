@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="error-page">
+    <div class="error-box">
+      <h1>403</h1>
+      <h2>Acesso negado</h2>
+      <p>Seu perfil de usuário não tem permissão para acessar esta área.</p>
+
+      <% if (user) { %>
+        <p class="text-muted">
+          Perfil atual: <strong><%= user.role %></strong>
+        </p>
+      <% } %>
+
+      <a href="/" class="btn btn-primary">Voltar para o Dashboard</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Permissões por Perfil</h2>
+            <p>Resumo das permissões previstas para cada tipo de usuário.</p>
+          </div>
+
+          <a href="/admin" class="btn">Voltar</a>
+        </div>
+
+        <div class="permissions-grid">
+          <% permissions.forEach(function(item) { %>
+            <div class="permission-card">
+              <span class="badge badge-role"><%= item.role %></span>
+              <h3><%= item.label %></h3>
+
+              <ul>
+                <% item.permissions.forEach(function(permission) { %>
+                  <li><%= permission %></li>
+                <% }) %>
+              </ul>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

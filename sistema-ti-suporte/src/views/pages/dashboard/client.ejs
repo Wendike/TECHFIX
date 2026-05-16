@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (!clientInfo) { %>
+        <div class="alert alert-error">
+          <p>Seu usuário ainda não está vinculado a um cadastro de cliente. Entre em contato com a assistência.</p>
+        </div>
+      <% } %>
+
+      <section class="client-dashboard-banner">
+        <h2>Olá, <%= clientInfo ? clientInfo.name : user.name %></h2>
+        <p>Acompanhe somente os dispositivos, reparos e entregas vinculados ao seu cadastro.</p>
+      </section>
+
+      <section class="cards dashboard-cards">
+        <div class="card">
+          <span class="card-label">Meus dispositivos</span>
+          <h2><%= stats.devices %></h2>
+          <p>Aparelhos deixados por você.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Em atendimento</span>
+          <h2><%= stats.repairsOpen %></h2>
+          <p>Reparos em andamento.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Finalizados</span>
+          <h2><%= stats.repairsFinished %></h2>
+          <p>Reparos concluídos.</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Entregues</span>
+          <h2><%= stats.deliveries %></h2>
+          <p>Aparelhos já entregues.</p>
+        </div>
+      </section>
+
+      <section class="panel panel-spaced">
+        <div class="panel-header">
+          <div>
+            <h2>Meus Dispositivos</h2>
+            <p>Aparelhos vinculados ao seu cadastro.</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Problema informado</th>
+                <th>Status</th>
+                <th>Entrada</th>
+                <th>Entrega</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (devices.length === 0) { %>
+                <tr>
+                  <td colspan="5" class="empty-table">Nenhum dispositivo encontrado para seu cadastro.</td>
+                </tr>
+              <% } %>
+
+              <% devices.forEach(function(device) { %>
+                <tr>
+                  <td>
+                    <strong><%= device.device_type %></strong><br>
+                    <span class="text-muted"><%= device.brand || '-' %> <%= device.model || '' %></span><br>
+                    <span class="text-muted">Série: <%= device.serial_number || '-' %></span>
+                  </td>
+
+                  <td><%= device.problem_description || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[device.status] || 'badge-role' %>">
+                      <%= deviceStatusLabels[device.status] || device.status %>
+                    </span>
+                  </td>
+
+                  <td><%= device.received_at || device.created_at || '-' %></td>
+                  <td><%= device.delivered_at || '-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel panel-spaced">
+        <div class="panel-header">
+          <div>
+            <h2>Meus Reparos</h2>
+            <p>Serviços técnicos vinculados aos seus dispositivos.</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Diagnóstico</th>
+                <th>Solução</th>
+                <th>Técnico</th>
+                <th>Status</th>
+                <th>Datas</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (repairs.length === 0) { %>
+                <tr>
+                  <td colspan="6" class="empty-table">Nenhum reparo encontrado para seu cadastro.</td>
+                </tr>
+              <% } %>
+
+              <% repairs.forEach(function(repair) { %>
+                <tr>
+                  <td>
+                    <strong><%= repair.device_type %></strong><br>
+                    <span class="text-muted"><%= repair.brand || '-' %> <%= repair.model || '' %></span><br>
+                    <span class="text-muted">Série: <%= repair.serial_number || '-' %></span>
+                  </td>
+
+                  <td><%= repair.diagnosis || '-' %></td>
+                  <td><%= repair.solution || '-' %></td>
+                  <td><%= repair.technician_name || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= statusClasses[repair.status] || 'badge-role' %>">
+                      <%= repairStatusLabels[repair.status] || repair.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    Início: <%= repair.started_at || '-' %><br>
+                    <span class="text-muted">Fim: <%= repair.finished_at || '-' %></span>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel panel-spaced">
+        <div class="panel-header">
+          <div>
+            <h2>Minhas Entregas</h2>
+            <p>Registros de retirada dos seus dispositivos.</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispositivo</th>
+                <th>Quem retirou</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Observações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (deliveries.length === 0) { %>
+                <tr>
+                  <td colspan="5" class="empty-table">Nenhuma entrega encontrada para seu cadastro.</td>
+                </tr>
+              <% } %>
+
+              <% deliveries.forEach(function(delivery) { %>
+                <tr>
+                  <td>
+                    <strong><%= delivery.device_type %></strong><br>
+                    <span class="text-muted"><%= delivery.brand || '-' %> <%= delivery.model || '' %></span><br>
+                    <span class="text-muted">Série: <%= delivery.serial_number || '-' %></span>
+                  </td>
+
+                  <td><%= delivery.received_by_name || '-' %></td>
+                  <td><%= delivery.delivery_date || '-' %></td>
+
+                  <td>
+                    <span class="badge <%= delivery.status === 'delivered' ? 'badge-success' : 'badge-danger' %>">
+                      <%= delivery.status === 'delivered' ? 'Entregue' : 'Cancelada' %>
+                    </span>
+                  </td>
+
+                  <td><%= delivery.notes || '-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

@@ -2,8 +2,12 @@ const express = require('express');
 
 const SupplierController = require('../controllers/SupplierController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 const router = express.Router();
+
+router.use(roleMiddleware('admin'));
+
 
 router.get('/', authMiddleware, SupplierController.index);
 router.get('/create', authMiddleware, SupplierController.create);

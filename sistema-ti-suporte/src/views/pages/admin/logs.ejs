@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../../partials/head') %>
+</head>
+<body>
+  <div class="app">
+    <%- include('../../partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('../../partials/header') %>
+
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Logs do Sistema</h2>
+            <p>Últimos 500 registros de acesso e ações realizadas.</p>
+          </div>
+
+          <div class="actions">
+            <form method="POST" action="/admin/logs/clear">
+              <button type="submit" class="btn btn-danger">Limpar Logs</button>
+            </form>
+
+            <a href="/admin" class="btn">Voltar</a>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Usuário</th>
+                <th>Método</th>
+                <th>URL</th>
+                <th>Status</th>
+                <th>IP</th>
+                <th>Tempo</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% if (logs.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="empty-table">Nenhum log registrado.</td>
+                </tr>
+              <% } %>
+
+              <% logs.forEach(function(log) { %>
+                <tr>
+                  <td><%= log.created_at %></td>
+
+                  <td>
+                    <% if (log.user_name) { %>
+                      <strong><%= log.user_name %></strong><br>
+                      <span class="text-muted"><%= log.user_role %></span>
+                    <% } else { %>
+                      <span class="text-muted">Visitante</span>
+                    <% } %>
+                  </td>
+
+                  <td>
+                    <span class="badge badge-role"><%= log.method %></span>
+                  </td>
+
+                  <td><%= log.url %></td>
+
+                  <td>
+                    <span class="badge <%= Number(log.status_code) >= 400 ? 'badge-danger' : 'badge-success' %>">
+                      <%= log.status_code %>
+                    </span>
+                  </td>
+
+                  <td><%= log.ip || '-' %></td>
+                  <td><%= log.duration_ms || 0 %>ms</td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <%- include('../../partials/scripts') %>
+</body>
+</html>

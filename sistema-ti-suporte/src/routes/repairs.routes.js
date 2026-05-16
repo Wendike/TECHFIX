@@ -2,8 +2,11 @@ const express = require('express');
 
 const RepairController = require('../controllers/RepairController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 const router = express.Router();
+
+router.use(roleMiddleware('admin', 'standard'));
 
 router.get('/', authMiddleware, RepairController.index);
 router.get('/create', authMiddleware, RepairController.create);

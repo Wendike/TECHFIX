@@ -1,9 +1,13 @@
 const express = require('express');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 const UserController = require('../controllers/UserController');
 const adminMiddleware = require('../middlewares/adminMiddleware');
 
 const router = express.Router();
+
+router.use(roleMiddleware('admin'));
+
 
 router.get('/', adminMiddleware, UserController.index);
 router.get('/create', adminMiddleware, UserController.create);

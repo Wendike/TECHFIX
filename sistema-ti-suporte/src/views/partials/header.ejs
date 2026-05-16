@@ -1,12 +1,17 @@
 <header class="topbar">
-  <div>
+  <div class="topbar-title">
+    <span class="page-kicker"><%= appName %> / <%= title || 'Sistema' %></span>
     <h1><%= title || appName %></h1>
     <p>Sistema de suporte, manutenção, estoque e financeiro</p>
   </div>
 
   <% if (user) { %>
     <div class="user-area">
-      <div>
+      <div class="user-avatar">
+        <%= user.name ? user.name.substring(0, 1).toUpperCase() : 'U' %>
+      </div>
+
+      <div class="user-info">
         <strong><%= user.name %></strong>
         <span><%= user.role %></span>
       </div>

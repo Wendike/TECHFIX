@@ -9,6 +9,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 
 const routes = require('./src/routes');
+const auditLogger = require('./src/middlewares/auditLogger');
 
 const app = express();
 
@@ -48,8 +49,12 @@ app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
+  res.locals.currentPath = req.path;
+  res.locals.currentYear = new Date().getFullYear();
   next();
 });
+
+app.use(auditLogger);
 
 app.use(routes);
 

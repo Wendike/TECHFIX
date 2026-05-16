@@ -2,8 +2,12 @@ const express = require('express');
 
 const PartController = require('../controllers/PartController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 const router = express.Router();
+
+router.use(roleMiddleware('admin'));
+
 
 router.get('/', authMiddleware, PartController.index);
 router.get('/create', authMiddleware, PartController.create);

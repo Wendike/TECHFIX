@@ -1,6 +1,9 @@
 const express = require('express');
 
+const publicAccessRoutes = require('./public-access.routes');
 const authRoutes = require('./auth.routes');
+const adminRoutes = require('./admin.routes');
+
 const usersRoutes = require('./users.routes');
 const clientsRoutes = require('./clients.routes');
 const suppliersRoutes = require('./suppliers.routes');
@@ -14,20 +17,17 @@ const deliveriesRoutes = require('./deliveries.routes');
 const reportsRoutes = require('./reports.routes');
 
 const DashboardController = require('../controllers/DashboardController');
-const AdminController = require('../controllers/AdminController');
-
 const authMiddleware = require('../middlewares/authMiddleware');
-const adminMiddleware = require('../middlewares/adminMiddleware');
 
 const router = express.Router();
 
+router.use(publicAccessRoutes);
 router.use(authRoutes);
 
 router.get('/', authMiddleware, DashboardController.index);
 router.get('/dashboard', authMiddleware, DashboardController.index);
 
-router.get('/admin', adminMiddleware, AdminController.index);
-
+router.use('/admin', adminRoutes);
 router.use('/users', usersRoutes);
 router.use('/clients', clientsRoutes);
 router.use('/suppliers', suppliersRoutes);

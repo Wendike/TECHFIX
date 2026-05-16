@@ -10,26 +10,46 @@
     <main class="main-content">
       <%- include('../../partials/header') %>
 
-      <section class="cards">
-        <div class="card">
-          <h2>Usuários</h2>
-          <p>Cadastrar administradores, usuários padrão, clientes e fornecedores.</p>
+      <% if (success && success.length) { %>
+        <div class="alert alert-success">
+          <% success.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
         </div>
+      <% } %>
 
-        <div class="card">
-          <h2>Permissões</h2>
-          <p>Controlar níveis de acesso do sistema.</p>
+      <% if (error && error.length) { %>
+        <div class="alert alert-error">
+          <% error.forEach(function(message) { %>
+            <p><%= message %></p>
+          <% }) %>
         </div>
+      <% } %>
 
-        <div class="card">
-          <h2>Backups</h2>
-          <p>Gerenciar cópias de segurança do banco SQLite.</p>
-        </div>
+      <section class="admin-grid">
+        <a href="/users" class="admin-card">
+          <span>01</span>
+          <strong>Usuários</strong>
+          <p>Cadastrar, editar e controlar acesso dos usuários.</p>
+        </a>
 
-        <div class="card">
-          <h2>Logs</h2>
-          <p>Auditoria de ações realizadas no sistema.</p>
-        </div>
+        <a href="/admin/permissions" class="admin-card">
+          <span>02</span>
+          <strong>Permissões</strong>
+          <p>Visualizar regras de acesso por perfil.</p>
+        </a>
+
+        <a href="/admin/backups" class="admin-card">
+          <span>03</span>
+          <strong>Backups</strong>
+          <p>Criar, baixar e excluir cópias do banco SQLite.</p>
+        </a>
+
+        <a href="/admin/logs" class="admin-card">
+          <span>04</span>
+          <strong>Logs</strong>
+          <p>Auditoria de acessos e ações realizadas no sistema.</p>
+        </a>
       </section>
     </main>
   </div>

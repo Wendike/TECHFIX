@@ -1,22 +1,102 @@
+<%
+  const role = user ? user.role : null;
+  const isAdmin = role === 'admin';
+  const isTechnician = role === 'standard';
+  const canOperate = isAdmin || isTechnician;
+%>
+
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <strong>TECHFIX</strong>
-    <span>Gestão Técnica</span>
+    <div class="brand-mark">TF</div>
+
+    <div>
+      <strong>TECHFIX</strong>
+      <span>Gestão Técnica</span>
+    </div>
   </div>
 
   <nav class="sidebar-menu">
-    <a href="/">Dashboard</a>
-    <a href="/admin">Administração</a>
-    <a href="/users">Usuários</a>
-    <a href="/clients">Clientes</a>
-    <a href="/suppliers">Fornecedores</a>
-    <a href="/devices">Dispositivos</a>
-    <a href="/repairs">Reparos</a>
-    <a href="/parts">Peças</a>
-    <a href="/inventory">Estoque</a>
-    <a href="/sales">Vendas</a>
-    <a href="/finance">Financeiro</a>
-    <a href="/deliveries">Entregas</a>
-    <a href="/reports">Relatórios</a>
+    <a href="/" class="<%= currentPath === '/' || currentPath.startsWith('/dashboard') ? 'active' : '' %>">
+      <span>01</span> Dashboard
+    </a>
+
+    <% if (isAdmin) { %>
+      <a href="/admin" class="<%= currentPath.startsWith('/admin') ? 'active' : '' %>">
+        <span>02</span> Administração
+      </a>
+
+      <a href="/users" class="<%= currentPath.startsWith('/users') ? 'active' : '' %>">
+        <span>03</span> Usuários
+      </a>
+    <% } %>
+
+    <% if (canOperate) { %>
+      <a href="/clients" class="<%= currentPath.startsWith('/clients') ? 'active' : '' %>">
+        <span>04</span> Clientes
+      </a>
+    <% } %>
+
+    <% if (isAdmin) { %>
+      <a href="/suppliers" class="<%= currentPath.startsWith('/suppliers') ? 'active' : '' %>">
+        <span>05</span> Fornecedores
+      </a>
+    <% } %>
+
+    <% if (canOperate) { %>
+      <a href="/devices" class="<%= currentPath.startsWith('/devices') ? 'active' : '' %>">
+        <span>06</span> Dispositivos
+      </a>
+
+      <a href="/repairs" class="<%= currentPath.startsWith('/repairs') ? 'active' : '' %>">
+        <span>07</span> Reparos
+      </a>
+    <% } %>
+
+    <% if (isAdmin) { %>
+      <a href="/parts" class="<%= currentPath.startsWith('/parts') ? 'active' : '' %>">
+        <span>08</span> Peças
+      </a>
+    <% } %>
+
+    <% if (canOperate) { %>
+      <a href="/inventory" class="<%= currentPath.startsWith('/inventory') ? 'active' : '' %>">
+        <span>09</span> Estoque
+      </a>
+    <% } %>
+
+    <% if (isAdmin) { %>
+      <a href="/sales" class="<%= currentPath.startsWith('/sales') ? 'active' : '' %>">
+        <span>10</span> Vendas
+      </a>
+
+      <a href="/finance" class="<%= currentPath.startsWith('/finance') ? 'active' : '' %>">
+        <span>11</span> Financeiro
+      </a>
+    <% } %>
+
+    <% if (canOperate) { %>
+      <a href="/deliveries" class="<%= currentPath.startsWith('/deliveries') ? 'active' : '' %>">
+        <span>12</span> Entregas
+      </a>
+    <% } %>
+
+    <% if (isAdmin) { %>
+      <a href="/reports" class="<%= currentPath.startsWith('/reports') ? 'active' : '' %>">
+        <span>13</span> Relatórios
+      </a>
+    <% } %>
   </nav>
+
+  <div class="sidebar-footer">
+    <small>TECHFIX © <%= currentYear %></small>
+    <small>
+      <% if (isAdmin) { %>
+        Administrador
+      <% } else if (isTechnician) { %>
+        Técnico
+      <% } else { %>
+        Acesso limitado
+      <% } %>
+    </small>
+  </div>
 </aside>
